@@ -6,7 +6,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'refrigerators',
     price: 649.99,
-    icon: '🧊',
     description: 'Spacious top-freezer fridge with adjustable glass shelving.',
   },
   {
@@ -15,7 +14,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'refrigerators',
     price: 1399.0,
-    icon: '🧊',
     description: 'French door fridge with in-door ice and water dispenser.',
   },
   {
@@ -24,7 +22,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'refrigerators',
     price: 129.5,
-    icon: '🧊',
     description: 'Small-space fridge, ideal for dorms and offices.',
   },
   // TVs
@@ -34,7 +31,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'tvs',
     price: 549.99,
-    icon: '📺',
     description: 'Vibrant 4K QLED display with built-in streaming apps.',
   },
   {
@@ -43,7 +39,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'tvs',
     price: 999.0,
-    icon: '📺',
     description: 'Deep blacks and true-to-life color with OLED panel technology.',
   },
   {
@@ -52,7 +47,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'tvs',
     price: 179.99,
-    icon: '📺',
     description: 'Compact HD TV, great for bedrooms and kitchens.',
   },
   // Vacuums
@@ -62,7 +56,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'vacuums',
     price: 249.99,
-    icon: '🧹',
     description: 'Self-navigating robot vacuum with app scheduling.',
   },
   {
@@ -71,7 +64,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'vacuums',
     price: 159.0,
-    icon: '🧹',
     description: 'Lightweight cordless vacuum with 40-minute runtime.',
   },
   // Electronics accessories
@@ -81,7 +73,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'electronics-accessories',
     price: 19.99,
-    icon: '🎛️',
     description: 'Works with most TVs, sound bars, and streaming boxes.',
   },
   {
@@ -90,7 +81,6 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'electronics-accessories',
     price: 24.5,
-    icon: '🔌',
     description: '8-outlet surge protector with 2 USB charging ports.',
   },
   // Laptops
@@ -100,7 +90,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'laptops',
     price: 899.0,
-    icon: '💻',
     description: 'Thin and light laptop with all-day battery life.',
   },
   {
@@ -109,7 +98,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'laptops',
     price: 1599.99,
-    icon: '💻',
     description: 'High-performance laptop for demanding workloads.',
   },
   {
@@ -118,7 +106,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'laptops',
     price: 499.99,
-    icon: '💻',
     description: 'Budget-friendly laptop for browsing and office work.',
   },
   // Computer accessories
@@ -128,7 +115,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'computer-accessories',
     price: 34.99,
-    icon: '⌨️',
     description: 'Reliable wireless combo with long battery life.',
   },
   {
@@ -137,7 +123,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'computer-accessories',
     price: 79.0,
-    icon: '🔌',
     description: 'Single-cable docking with HDMI, USB-A, and Ethernet.',
   },
   {
@@ -146,7 +131,6 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'computer-accessories',
     price: 219.99,
-    icon: '🖥️',
     description: 'Sharp 1440p monitor with adjustable stand.',
   },
   // Smartphones
@@ -156,7 +140,6 @@ export const PRODUCTS = [
     category: 'phones',
     subcategory: 'smartphones',
     price: 799.0,
-    icon: '📱',
     description: 'Flagship smartphone with triple-lens camera.',
   },
   {
@@ -165,7 +148,6 @@ export const PRODUCTS = [
     category: 'phones',
     subcategory: 'smartphones',
     price: 399.99,
-    icon: '📱',
     description: 'Affordable smartphone with all-day battery.',
   },
   // Phone accessories
@@ -175,7 +157,6 @@ export const PRODUCTS = [
     category: 'phones',
     subcategory: 'phone-accessories',
     price: 22.99,
-    icon: '🔋',
     description: '15W wireless charging pad, case-friendly.',
   },
   {
@@ -184,7 +165,6 @@ export const PRODUCTS = [
     category: 'phones',
     subcategory: 'phone-accessories',
     price: 14.99,
-    icon: '📱',
     description: 'Drop-tested protective case with raised edges.',
   },
 ]
