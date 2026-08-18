@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import CategoryNav from './components/CategoryNav'
 import ProductList from './components/ProductList'
+import ProductDetail from './components/ProductDetail'
 import AuthSection from './components/AuthSection'
-import { PRODUCTS } from './data/products'
+import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
 import { hashPassword } from './utils/hash'
@@ -14,6 +15,7 @@ function App() {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null)
   const [accounts, setAccounts] = useState(loadAccounts)
   const [currentUser, setCurrentUser] = useState(loadSession)
+  const [selectedProductId, setSelectedProductId] = useState(null)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -63,6 +65,8 @@ function App() {
     return true
   })
 
+  const selectedProduct = selectedProductId ? getProduct(selectedProductId) : null
+
   return (
     <div className="app">
       <Header />
@@ -73,13 +77,19 @@ function App() {
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}
         />
-        <CategoryNav
-          selectedCategory={selectedCategory}
-          selectedSubcategory={selectedSubcategory}
-          onSelectCategory={handleSelectCategory}
-          onSelectSubcategory={setSelectedSubcategory}
-        />
-        <ProductList products={filteredProducts} />
+        {selectedProduct ? (
+          <ProductDetail product={selectedProduct} onBack={() => setSelectedProductId(null)} />
+        ) : (
+          <>
+            <CategoryNav
+              selectedCategory={selectedCategory}
+              selectedSubcategory={selectedSubcategory}
+              onSelectCategory={handleSelectCategory}
+              onSelectSubcategory={setSelectedSubcategory}
+            />
+            <ProductList products={filteredProducts} onSelect={setSelectedProductId} />
+          </>
+        )}
       </main>
     </div>
   )

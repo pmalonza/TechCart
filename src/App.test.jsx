@@ -20,6 +20,24 @@ function fillSignUpForm(user, { name, email, password }) {
 }
 
 describe('App', () => {
+  it('opens a product detail view when a card is clicked, and returns via Back', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+
+    expect(screen.getByRole('heading', { name: 'VividView 55" 4K QLED TV' })).toBeInTheDocument()
+    expect(screen.getByText('Electronics › TVs')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Electronics' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Back to products/ }))
+
+    expect(screen.queryByText('Electronics › TVs')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Electronics' })).toBeInTheDocument()
+    // The product is back in the list (as a card, not the detail view).
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+  })
+
   it('renders all products by default', () => {
     render(<App />)
     expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
