@@ -165,6 +165,16 @@ describe('App', () => {
     await user.click(screen.getByRole('tab', { name: 'Create account' }))
   }
 
+  async function signIn(user, { email, password }) {
+    await user.type(screen.getByLabelText('Email'), email)
+    await user.type(screen.getByLabelText('Password'), password)
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    const code = screen.getByText(/the code is \d{6}/).textContent.match(/\d{6}/)[0]
+    await user.type(screen.getByLabelText('Verification code'), code)
+    await user.click(screen.getByRole('button', { name: 'Verify' }))
+  }
+
   it('creates an account and persists it to localStorage', async () => {
     const user = userEvent.setup()
     render(<App />)
@@ -222,9 +232,7 @@ describe('App', () => {
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     expect(screen.getByText('Signed in as')).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
@@ -276,9 +284,7 @@ describe('App', () => {
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: 'Sign out' }))
 
@@ -323,9 +329,7 @@ describe('App', () => {
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
     await user.click(screen.getByRole('button', { name: 'Add to cart' }))
@@ -334,9 +338,7 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: 'Sign out' }))
     expect(screen.getByRole('button', { name: 'Cart' })).toBeInTheDocument()
 
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     expect(screen.getByRole('button', { name: 'Cart (1)' })).toBeInTheDocument()
   })
@@ -412,9 +414,7 @@ describe('App', () => {
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: 'Profile' }))
     const nameInput = screen.getByLabelText('Name')
@@ -473,9 +473,7 @@ describe('App', () => {
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Back to sign in' }))
-    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
-    await user.type(screen.getByLabelText('Password'), 'brandnewpw456')
-    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    await signIn(user, { email: 'ada@gmail.com', password: 'brandnewpw456' })
 
     expect(screen.getByText('Signed in as')).toBeInTheDocument()
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
@@ -520,5 +518,48 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: 'Send reset code' }))
 
     expect(screen.getByRole('alert')).toHaveTextContent('No account found with that email.')
+  })
+
+  it('requires a verification code after a correct password before signing in', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByLabelText('Verification code')).toBeInTheDocument()
+    expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
+  })
+
+  it('rejects an incorrect verification code and keeps the user signed out', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await user.type(screen.getByLabelText('Verification code'), '000000')
+    await user.click(screen.getByRole('button', { name: 'Verify' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Invalid or expired verification code.')
+    expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
   })
 })

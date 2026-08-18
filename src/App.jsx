@@ -34,6 +34,7 @@ function App() {
   const [lastOrder, setLastOrder] = useState(null)
   const [appliedDiscount, setAppliedDiscount] = useState(null)
   const [passwordReset, setPasswordReset] = useState(null)
+  const [pendingVerification, setPendingVerification] = useState(null)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -68,8 +69,23 @@ function App() {
       return { ok: false, message: 'Incorrect password.' }
     }
 
-    setCurrentUser({ name: account.name, email: account.email })
-    setCart(loadCart(account.email))
+    const code = generateResetCode()
+    setPendingVerification({ name: account.name, email: account.email, code })
+    return { ok: true, requiresVerification: true, code }
+  }
+
+  async function handleVerifySignIn({ email, code }) {
+    const isMatch =
+      pendingVerification &&
+      pendingVerification.email.toLowerCase() === email.toLowerCase() &&
+      pendingVerification.code === code
+    if (!isMatch) {
+      return { ok: false, message: 'Invalid or expired verification code.' }
+    }
+
+    setCurrentUser({ name: pendingVerification.name, email: pendingVerification.email })
+    setCart(loadCart(pendingVerification.email))
+    setPendingVerification(null)
     return { ok: true }
   }
 
@@ -226,6 +242,7 @@ function App() {
           currentUser={currentUser}
           onSignUp={handleSignUp}
           onSignIn={handleSignIn}
+          onVerifySignIn={handleVerifySignIn}
           onSignOut={handleSignOut}
           onViewProfile={() => setView('profile')}
           onRequestPasswordReset={handleRequestPasswordReset}

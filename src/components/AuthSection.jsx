@@ -2,11 +2,13 @@ import { useState } from 'react'
 import SignUpForm from './SignUpForm'
 import SignInForm from './SignInForm'
 import ForgotPasswordForm from './ForgotPasswordForm'
+import VerifyEmailForm from './VerifyEmailForm'
 
 export default function AuthSection({
   currentUser,
   onSignUp,
   onSignIn,
+  onVerifySignIn,
   onSignOut,
   onViewProfile,
   onRequestPasswordReset,
@@ -14,11 +16,31 @@ export default function AuthSection({
 }) {
   const [mode, setMode] = useState('signin')
   const [justCreated, setJustCreated] = useState('')
+  const [verifyEmail, setVerifyEmail] = useState('')
+  const [verifyDemoCode, setVerifyDemoCode] = useState('')
 
   async function handleSignUp(details) {
     const result = await onSignUp(details)
     if (result.ok) {
       setJustCreated(details.name)
+      setMode('signin')
+    }
+    return result
+  }
+
+  async function handleSignIn(details) {
+    const result = await onSignIn(details)
+    if (result.ok && result.requiresVerification) {
+      setVerifyEmail(details.email)
+      setVerifyDemoCode(result.code)
+      setMode('verify')
+    }
+    return result
+  }
+
+  async function handleVerifySignIn(details) {
+    const result = await onVerifySignIn(details)
+    if (result.ok) {
       setMode('signin')
     }
     return result
@@ -48,7 +70,14 @@ export default function AuthSection({
           Account created for {justCreated}. Sign in below.
         </p>
       )}
-      {mode === 'reset' ? (
+      {mode === 'verify' ? (
+        <VerifyEmailForm
+          email={verifyEmail}
+          demoCode={verifyDemoCode}
+          onVerify={handleVerifySignIn}
+          onCancel={() => setMode('signin')}
+        />
+      ) : mode === 'reset' ? (
         <ForgotPasswordForm
           onRequestReset={onRequestPasswordReset}
           onResetPassword={onResetPassword}
@@ -77,7 +106,7 @@ export default function AuthSection({
             </button>
           </div>
           {mode === 'signin' ? (
-            <SignInForm onSignIn={onSignIn} onForgotPassword={() => setMode('reset')} />
+            <SignInForm onSignIn={handleSignIn} onForgotPassword={() => setMode('reset')} />
           ) : (
             <SignUpForm onSignUp={handleSignUp} />
           )}
