@@ -6,7 +6,7 @@ import SignUpForm from './SignUpForm'
 function fillValidForm(user) {
   return Promise.resolve()
     .then(() => user.type(screen.getByLabelText('Name'), 'Ada Lovelace'))
-    .then(() => user.type(screen.getByLabelText('Email'), 'ada@example.com'))
+    .then(() => user.type(screen.getByLabelText('Email'), 'ada@gmail.com'))
     .then(() => user.type(screen.getByLabelText('Password'), 'longenoughpw'))
     .then(() => user.type(screen.getByLabelText('Confirm password'), 'longenoughpw'))
 }
@@ -22,7 +22,7 @@ describe('SignUpForm', () => {
 
     expect(onSignUp).toHaveBeenCalledWith({
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
   })
@@ -51,7 +51,7 @@ describe('SignUpForm', () => {
     expect(onSignUp).not.toHaveBeenCalled()
   })
 
-  it('rejects an invalid email', async () => {
+  it('rejects a malformed email', async () => {
     const user = userEvent.setup()
     const onSignUp = vi.fn()
     render(<SignUpForm onSignUp={onSignUp} />)
@@ -60,7 +60,20 @@ describe('SignUpForm', () => {
     await user.type(screen.getByLabelText('Email'), 'not-an-email')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Enter a valid email address.')
+    expect(screen.getByRole('alert')).toHaveTextContent('supported provider')
+    expect(onSignUp).not.toHaveBeenCalled()
+  })
+
+  it('rejects a well-formed email from an unsupported provider', async () => {
+    const user = userEvent.setup()
+    const onSignUp = vi.fn()
+    render(<SignUpForm onSignUp={onSignUp} />)
+
+    await user.type(screen.getByLabelText('Name'), 'Ada Lovelace')
+    await user.type(screen.getByLabelText('Email'), 'ada@made-up-domain.com')
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('supported provider')
     expect(onSignUp).not.toHaveBeenCalled()
   })
 
@@ -70,7 +83,7 @@ describe('SignUpForm', () => {
     render(<SignUpForm onSignUp={onSignUp} />)
 
     await user.type(screen.getByLabelText('Name'), 'Ada Lovelace')
-    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'short')
     await user.type(screen.getByLabelText('Confirm password'), 'short')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
@@ -85,7 +98,7 @@ describe('SignUpForm', () => {
     render(<SignUpForm onSignUp={onSignUp} />)
 
     await user.type(screen.getByLabelText('Name'), 'Ada Lovelace')
-    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'longenoughpw')
     await user.type(screen.getByLabelText('Confirm password'), 'different-pw')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
@@ -103,6 +116,6 @@ describe('SignUpForm', () => {
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     expect(screen.getByRole('alert')).toHaveTextContent('Email already taken.')
-    expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
+    expect(screen.getByLabelText('Email')).toHaveValue('ada@gmail.com')
   })
 })

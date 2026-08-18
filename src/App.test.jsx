@@ -172,7 +172,7 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
@@ -181,7 +181,7 @@ describe('App', () => {
 
     const stored = JSON.parse(window.localStorage.getItem('techcart:accounts'))
     expect(stored).toHaveLength(1)
-    expect(stored[0].email).toBe('ada@example.com')
+    expect(stored[0].email).toBe('ada@gmail.com')
     expect(stored[0].passwordHash).not.toBe('longenoughpw')
   })
 
@@ -192,7 +192,7 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
@@ -200,7 +200,7 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Someone Else',
-      email: 'ADA@example.com',
+      email: 'ADA@GMAIL.com',
       password: 'anotherlongpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
@@ -217,12 +217,12 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'longenoughpw')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
@@ -230,7 +230,7 @@ describe('App', () => {
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
     expect(JSON.parse(window.localStorage.getItem('techcart:session'))).toEqual({
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
     })
   })
 
@@ -241,12 +241,12 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'wrong-password')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
@@ -258,7 +258,7 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.type(screen.getByLabelText('Email'), 'nobody@example.com')
+    await user.type(screen.getByLabelText('Email'), 'nobody@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'whatever123')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
@@ -272,11 +272,11 @@ describe('App', () => {
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
-    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'longenoughpw')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 

@@ -1,6 +1,5 @@
 import { useState } from 'react'
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import { isAllowedEmailProvider } from '../utils/email'
 
 export default function SignUpForm({ onSignUp }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
@@ -20,8 +19,8 @@ export default function SignUpForm({ onSignUp }) {
       setError('Enter your name.')
       return
     }
-    if (!EMAIL_PATTERN.test(form.email.trim())) {
-      setError('Enter a valid email address.')
+    if (!isAllowedEmailProvider(form.email.trim())) {
+      setError('Enter a valid email from a supported provider (Gmail, Outlook, Yahoo, iCloud, etc.).')
       return
     }
     if (form.password.length < 8) {
