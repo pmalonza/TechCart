@@ -60,6 +60,59 @@ describe('App', () => {
     expect(screen.getByText('Nova X12 Smartphone')).toBeInTheDocument()
   })
 
+  it('filters products by minimum price', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Min price'), '500')
+
+    expect(screen.getByText('AeroBook 14" Ultralight Laptop')).toBeInTheDocument()
+    expect(screen.queryByText('Nova SE Smartphone')).not.toBeInTheDocument()
+  })
+
+  it('filters products by maximum price', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Max price'), '50')
+
+    expect(screen.getByText('Universal Remote Control')).toBeInTheDocument()
+    expect(screen.queryByText('AeroBook 14" Ultralight Laptop')).not.toBeInTheDocument()
+  })
+
+  it('filters products by min and max price together', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Min price'), '100')
+    await user.type(screen.getByLabelText('Max price'), '200')
+
+    expect(screen.getByText('CompactCool Mini Fridge')).toBeInTheDocument()
+    expect(screen.queryByText('AeroBook 14" Ultralight Laptop')).not.toBeInTheDocument()
+    expect(screen.queryByText('Fast Wireless Charging Pad')).not.toBeInTheDocument()
+  })
+
+  it('filters products by color', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Red' }))
+
+    expect(screen.getByText('CompactCool Mini Fridge')).toBeInTheDocument()
+    expect(screen.getByText('Shockproof Phone Case')).toBeInTheDocument()
+    expect(screen.queryByText('AeroBook 14" Ultralight Laptop')).not.toBeInTheDocument()
+  })
+
+  it('clears the color filter when "All" is clicked', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Red' }))
+    await user.click(screen.getByRole('button', { name: 'All' }))
+
+    expect(screen.getByText('AeroBook 14" Ultralight Laptop')).toBeInTheDocument()
+  })
+
   it('filters to a category when selected', async () => {
     const user = userEvent.setup()
     render(<App />)

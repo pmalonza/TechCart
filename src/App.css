@@ -203,6 +203,72 @@
   outline-offset: 2px;
 }
 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filters-price {
+  display: flex;
+  gap: 12px;
+}
+
+.filters .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filters .field label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.filters .field input {
+  font: inherit;
+  width: 90px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.filters-colors-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.color-swatch-all {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.color-swatch-all-active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.color-swatch-all:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .product-list {
   list-style: none;
   margin: 0;

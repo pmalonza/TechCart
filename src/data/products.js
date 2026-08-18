@@ -237,3 +237,21 @@ export const PRODUCTS = [
 export function getProduct(id) {
   return PRODUCTS.find((product) => product.id === id) ?? null
 }
+
+// Deduped by color id across the whole catalog, for a single global color
+// filter. Where the same id shows up with different labels on different
+// products (e.g. 'black' as both "Black" and "Midnight Black"), this keeps
+// whichever label was seen first — a reasonable simplification for a
+// catalog-wide filter control, even though a specific product's own swatch
+// may show a more specific label.
+export function getAllColors() {
+  const seen = new Map()
+  for (const product of PRODUCTS) {
+    for (const color of product.colors) {
+      if (!seen.has(color.id)) {
+        seen.set(color.id, color)
+      }
+    }
+  }
+  return [...seen.values()]
+}

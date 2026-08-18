@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PRODUCTS, getProduct } from './products'
+import { PRODUCTS, getProduct, getAllColors } from './products'
 import { getCategory, getSubcategory } from './categories'
 
 describe('getProduct', () => {
@@ -52,5 +52,21 @@ describe('PRODUCTS', () => {
       if (!product.sizes) continue
       expect(new Set(product.sizes).size).toBe(product.sizes.length)
     }
+  })
+})
+
+describe('getAllColors', () => {
+  it('returns a deduplicated list of colors across the catalog', () => {
+    const colors = getAllColors()
+    const ids = colors.map((color) => color.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    expect(colors.length).toBeGreaterThan(0)
+  })
+
+  it('includes colors from multiple products, not just the first one', () => {
+    const colors = getAllColors()
+    const ids = colors.map((color) => color.id)
+    expect(ids).toContain('red')
+    expect(ids).toContain('gold')
   })
 })
