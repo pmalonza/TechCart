@@ -29,8 +29,8 @@ export default function Filters({ minPrice, maxPrice, onMinPriceChange, onMaxPri
           />
         </div>
       </div>
-      <div className="filters-colors">
-        <span className="filters-colors-label">Color</span>
+      <fieldset className="filters-colors">
+        <legend className="filters-colors-label">Color</legend>
         <div className="color-swatches">
           <button
             type="button"
@@ -55,7 +55,7 @@ export default function Filters({ minPrice, maxPrice, onMinPriceChange, onMaxPri
             />
           ))}
         </div>
-      </div>
+      </fieldset>
     </div>
   )
 }

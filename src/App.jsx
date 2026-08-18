@@ -232,12 +232,15 @@ function App() {
 
   return (
     <div className="app">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Header
         cartCount={cartCount}
         onViewCart={() => setView('cart')}
         onViewHelp={() => setView('help')}
       />
-      <main>
+      <main id="main-content">
         <AuthSection
           currentUser={currentUser}
           onSignUp={handleSignUp}
