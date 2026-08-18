@@ -2,7 +2,7 @@ import { useState } from 'react'
 import SignUpForm from './SignUpForm'
 import SignInForm from './SignInForm'
 
-export default function AuthSection({ currentUser, onSignUp, onSignIn, onSignOut }) {
+export default function AuthSection({ currentUser, onSignUp, onSignIn, onSignOut, onViewProfile }) {
   const [mode, setMode] = useState('signin')
   const [justCreated, setJustCreated] = useState('')
 
@@ -21,6 +21,9 @@ export default function AuthSection({ currentUser, onSignUp, onSignIn, onSignOut
         <span>
           Signed in as <strong>{currentUser.name}</strong>
         </span>
+        <button type="button" className="text-button" onClick={onViewProfile}>
+          Profile
+        </button>
         <button type="button" className="text-button" onClick={onSignOut}>
           Sign out
         </button>

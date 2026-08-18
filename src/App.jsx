@@ -8,6 +8,7 @@ import AuthSection from './components/AuthSection'
 import CartView from './components/CartView'
 import CheckoutView from './components/CheckoutView'
 import OrderConfirmation from './components/OrderConfirmation'
+import ProfileView from './components/ProfileView'
 import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
@@ -72,6 +73,16 @@ function App() {
   function handleSignOut() {
     setCurrentUser(null)
     setCart(loadCart(null))
+    setView('browse')
+  }
+
+  function handleUpdateProfile({ name }) {
+    setAccounts((prev) =>
+      prev.map((account) =>
+        account.email.toLowerCase() === currentUser.email.toLowerCase() ? { ...account, name } : account,
+      ),
+    )
+    setCurrentUser((prev) => ({ ...prev, name }))
   }
 
   function handleSelectCategory(categoryId) {
@@ -179,8 +190,15 @@ function App() {
           onSignUp={handleSignUp}
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}
+          onViewProfile={() => setView('profile')}
         />
-        {view === 'confirmation' && lastOrder ? (
+        {view === 'profile' && currentUser ? (
+          <ProfileView
+            user={currentUser}
+            onBack={() => setView('browse')}
+            onUpdateProfile={handleUpdateProfile}
+          />
+        ) : view === 'confirmation' && lastOrder ? (
           <OrderConfirmation order={lastOrder} onContinueShopping={handleContinueShopping} />
         ) : view === 'checkout' ? (
           <CheckoutView

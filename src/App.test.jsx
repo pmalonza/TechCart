@@ -400,4 +400,34 @@ describe('App', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Invalid discount code.')
     expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
   })
+
+  it('updates the profile name and reflects it in the signed-in header', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    const nameInput = screen.getByLabelText('Name')
+    await user.clear(nameInput)
+    await user.type(nameInput, 'Ada King')
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(screen.getByRole('status')).toHaveTextContent('Profile updated.')
+
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+
+    expect(screen.getByText('Ada King')).toBeInTheDocument()
+    const stored = JSON.parse(window.localStorage.getItem('techcart:accounts'))
+    expect(stored[0].name).toBe('Ada King')
+  })
 })
