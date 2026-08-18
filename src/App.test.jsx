@@ -340,4 +340,26 @@ describe('App', () => {
 
     expect(screen.getByRole('button', { name: 'Cart (1)' })).toBeInTheDocument()
   })
+
+  it('places an order through checkout and empties the cart', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+
+    expect(screen.getByText(/VividView 55" 4K QLED TV/)).toBeInTheDocument()
+    expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Place order' }))
+
+    expect(screen.getByRole('status')).toHaveTextContent(/Order ORD-.+ placed\. Thank you!/)
+
+    await user.click(screen.getByRole('button', { name: 'Continue shopping' }))
+
+    expect(screen.getByRole('button', { name: 'Cart' })).toBeInTheDocument()
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+  })
 })

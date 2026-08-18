@@ -20,13 +20,30 @@ function makeItem(overrides = {}) {
 
 describe('CartView', () => {
   it('shows an empty state with no items', () => {
-    render(<CartView items={[]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={vi.fn()} />)
+    render(
+      <CartView items={[]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={vi.fn()} onCheckout={vi.fn()} />,
+    )
     expect(screen.getByText('Your cart is empty.')).toBeInTheDocument()
+  })
+
+  it('does not show a checkout button with an empty cart', () => {
+    render(
+      <CartView items={[]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={vi.fn()} onCheckout={vi.fn()} />,
+    )
+    expect(screen.queryByRole('button', { name: 'Checkout' })).not.toBeInTheDocument()
   })
 
   it('lists items with variant, price, and subtotal', () => {
     const item = makeItem({ quantity: 2 })
-    render(<CartView items={[item]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={vi.fn()} />)
+    render(
+      <CartView
+        items={[item]}
+        onUpdateQuantity={vi.fn()}
+        onRemove={vi.fn()}
+        onBack={vi.fn()}
+        onCheckout={vi.fn()}
+      />,
+    )
 
     expect(screen.getByText('CompactCool Mini Fridge')).toBeInTheDocument()
     expect(screen.getByText('White')).toBeInTheDocument()
@@ -38,7 +55,13 @@ describe('CartView', () => {
     const onUpdateQuantity = vi.fn()
     const item = makeItem()
     render(
-      <CartView items={[item]} onUpdateQuantity={onUpdateQuantity} onRemove={vi.fn()} onBack={vi.fn()} />,
+      <CartView
+        items={[item]}
+        onUpdateQuantity={onUpdateQuantity}
+        onRemove={vi.fn()}
+        onBack={vi.fn()}
+        onCheckout={vi.fn()}
+      />,
     )
 
     const qtyInput = screen.getByLabelText('Qty')
@@ -53,7 +76,13 @@ describe('CartView', () => {
     const onUpdateQuantity = vi.fn()
     const item = makeItem()
     render(
-      <CartView items={[item]} onUpdateQuantity={onUpdateQuantity} onRemove={vi.fn()} onBack={vi.fn()} />,
+      <CartView
+        items={[item]}
+        onUpdateQuantity={onUpdateQuantity}
+        onRemove={vi.fn()}
+        onBack={vi.fn()}
+        onCheckout={vi.fn()}
+      />,
     )
 
     const qtyInput = screen.getByLabelText('Qty')
@@ -68,7 +97,15 @@ describe('CartView', () => {
     const user = userEvent.setup()
     const onRemove = vi.fn()
     const item = makeItem()
-    render(<CartView items={[item]} onUpdateQuantity={vi.fn()} onRemove={onRemove} onBack={vi.fn()} />)
+    render(
+      <CartView
+        items={[item]}
+        onUpdateQuantity={vi.fn()}
+        onRemove={onRemove}
+        onBack={vi.fn()}
+        onCheckout={vi.fn()}
+      />,
+    )
 
     await user.click(screen.getByRole('button', { name: 'Remove' }))
 
@@ -78,10 +115,31 @@ describe('CartView', () => {
   it('calls onBack when Continue shopping is clicked', async () => {
     const user = userEvent.setup()
     const onBack = vi.fn()
-    render(<CartView items={[]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={onBack} />)
+    render(
+      <CartView items={[]} onUpdateQuantity={vi.fn()} onRemove={vi.fn()} onBack={onBack} onCheckout={vi.fn()} />,
+    )
 
     await user.click(screen.getByRole('button', { name: /Continue shopping/ }))
 
     expect(onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it('calls onCheckout when Checkout is clicked', async () => {
+    const user = userEvent.setup()
+    const onCheckout = vi.fn()
+    const item = makeItem()
+    render(
+      <CartView
+        items={[item]}
+        onUpdateQuantity={vi.fn()}
+        onRemove={vi.fn()}
+        onBack={vi.fn()}
+        onCheckout={onCheckout}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+
+    expect(onCheckout).toHaveBeenCalledTimes(1)
   })
 })

@@ -34,7 +34,7 @@ function QuantityInput({ variantId, quantity, onUpdateQuantity }) {
   )
 }
 
-export default function CartView({ items, onUpdateQuantity, onRemove, onBack }) {
+export default function CartView({ items, onUpdateQuantity, onRemove, onBack, onCheckout }) {
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 
   return (
@@ -74,6 +74,9 @@ export default function CartView({ items, onUpdateQuantity, onRemove, onBack }) 
             ))}
           </ul>
           <p className="cart-total">Total: {formatCurrency(total)}</p>
+          <button type="button" className="add-button" onClick={onCheckout}>
+            Checkout
+          </button>
         </>
       )}
     </section>

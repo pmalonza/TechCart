@@ -6,6 +6,8 @@ import ProductDetail from './components/ProductDetail'
 import Filters from './components/Filters'
 import AuthSection from './components/AuthSection'
 import CartView from './components/CartView'
+import CheckoutView from './components/CheckoutView'
+import OrderConfirmation from './components/OrderConfirmation'
 import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
@@ -24,7 +26,8 @@ function App() {
   const [maxPrice, setMaxPrice] = useState('')
   const [selectedColor, setSelectedColor] = useState(null)
   const [cart, setCart] = useState(() => loadCart(currentUser?.email))
-  const [showCart, setShowCart] = useState(false)
+  const [view, setView] = useState('browse')
+  const [lastOrder, setLastOrder] = useState(null)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -76,7 +79,7 @@ function App() {
 
   function handleSelectProduct(productId) {
     setSelectedProductId(productId)
-    setShowCart(false)
+    setView('browse')
   }
 
   function handleAddToCart(product, { colorId, size, quantity }) {
@@ -104,6 +107,23 @@ function App() {
     setCart((prev) => prev.filter((item) => item.variantId !== variantId))
   }
 
+  function handlePlaceOrder() {
+    const order = {
+      id: `ORD-${Date.now().toString(36).toUpperCase()}`,
+      items: cartItems,
+      total: cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+    }
+    setLastOrder(order)
+    setCart([])
+    setView('confirmation')
+  }
+
+  function handleContinueShopping() {
+    setLastOrder(null)
+    setSelectedProductId(null)
+    setView('browse')
+  }
+
   const filteredProducts = PRODUCTS.filter((product) => {
     if (selectedCategory && product.category !== selectedCategory) return false
     if (selectedSubcategory && product.subcategory !== selectedSubcategory) return false
@@ -128,7 +148,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header cartCount={cartCount} onViewCart={() => setShowCart(true)} />
+      <Header cartCount={cartCount} onViewCart={() => setView('cart')} />
       <main>
         <AuthSection
           currentUser={currentUser}
@@ -136,12 +156,21 @@ function App() {
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}
         />
-        {showCart ? (
+        {view === 'confirmation' && lastOrder ? (
+          <OrderConfirmation order={lastOrder} onContinueShopping={handleContinueShopping} />
+        ) : view === 'checkout' ? (
+          <CheckoutView
+            items={cartItems}
+            onBack={() => setView('cart')}
+            onPlaceOrder={handlePlaceOrder}
+          />
+        ) : view === 'cart' ? (
           <CartView
             items={cartItems}
             onUpdateQuantity={handleUpdateCartQuantity}
             onRemove={handleRemoveFromCart}
-            onBack={() => setShowCart(false)}
+            onBack={() => setView('browse')}
+            onCheckout={() => setView('checkout')}
           />
         ) : selectedProduct ? (
           <ProductDetail
