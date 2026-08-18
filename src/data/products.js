@@ -7,6 +7,11 @@ export const PRODUCTS = [
     subcategory: 'refrigerators',
     price: 649.99,
     description: 'Spacious top-freezer fridge with adjustable glass shelving.',
+    colors: [
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'stainless', label: 'Stainless Steel', hex: '#adb5bd' },
+    ],
   },
   {
     id: 'ref-2',
@@ -15,6 +20,10 @@ export const PRODUCTS = [
     subcategory: 'refrigerators',
     price: 1399.0,
     description: 'French door fridge with in-door ice and water dispenser.',
+    colors: [
+      { id: 'stainless', label: 'Stainless Steel', hex: '#adb5bd' },
+      { id: 'black', label: 'Black Stainless', hex: '#343a40' },
+    ],
   },
   {
     id: 'ref-3',
@@ -23,6 +32,11 @@ export const PRODUCTS = [
     subcategory: 'refrigerators',
     price: 129.5,
     description: 'Small-space fridge, ideal for dorms and offices.',
+    colors: [
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'red', label: 'Red', hex: '#e03131' },
+    ],
   },
   // TVs
   {
@@ -32,6 +46,7 @@ export const PRODUCTS = [
     subcategory: 'tvs',
     price: 549.99,
     description: 'Vibrant 4K QLED display with built-in streaming apps.',
+    colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
   },
   {
     id: 'tv-2',
@@ -40,6 +55,7 @@ export const PRODUCTS = [
     subcategory: 'tvs',
     price: 999.0,
     description: 'Deep blacks and true-to-life color with OLED panel technology.',
+    colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
   },
   {
     id: 'tv-3',
@@ -48,6 +64,7 @@ export const PRODUCTS = [
     subcategory: 'tvs',
     price: 179.99,
     description: 'Compact HD TV, great for bedrooms and kitchens.',
+    colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
   },
   // Vacuums
   {
@@ -57,6 +74,10 @@ export const PRODUCTS = [
     subcategory: 'vacuums',
     price: 249.99,
     description: 'Self-navigating robot vacuum with app scheduling.',
+    colors: [
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+      { id: 'black', label: 'Black', hex: '#212529' },
+    ],
   },
   {
     id: 'vac-2',
@@ -65,6 +86,10 @@ export const PRODUCTS = [
     subcategory: 'vacuums',
     price: 159.0,
     description: 'Lightweight cordless vacuum with 40-minute runtime.',
+    colors: [
+      { id: 'blue', label: 'Blue', hex: '#1971c2' },
+      { id: 'purple', label: 'Purple', hex: '#9c36b5' },
+    ],
   },
   // Electronics accessories
   {
@@ -74,6 +99,7 @@ export const PRODUCTS = [
     subcategory: 'electronics-accessories',
     price: 19.99,
     description: 'Works with most TVs, sound bars, and streaming boxes.',
+    colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
   },
   {
     id: 'eacc-2',
@@ -82,6 +108,7 @@ export const PRODUCTS = [
     subcategory: 'electronics-accessories',
     price: 24.5,
     description: '8-outlet surge protector with 2 USB charging ports.',
+    colors: [{ id: 'white', label: 'White', hex: '#f8f9fa' }],
   },
   // Laptops
   {
@@ -91,6 +118,10 @@ export const PRODUCTS = [
     subcategory: 'laptops',
     price: 899.0,
     description: 'Thin and light laptop with all-day battery life.',
+    colors: [
+      { id: 'silver', label: 'Silver', hex: '#ced4da' },
+      { id: 'space-gray', label: 'Space Gray', hex: '#495057' },
+    ],
   },
   {
     id: 'lap-2',
@@ -99,6 +130,7 @@ export const PRODUCTS = [
     subcategory: 'laptops',
     price: 1599.99,
     description: 'High-performance laptop for demanding workloads.',
+    colors: [{ id: 'space-gray', label: 'Space Gray', hex: '#495057' }],
   },
   {
     id: 'lap-3',
@@ -107,6 +139,10 @@ export const PRODUCTS = [
     subcategory: 'laptops',
     price: 499.99,
     description: 'Budget-friendly laptop for browsing and office work.',
+    colors: [
+      { id: 'silver', label: 'Silver', hex: '#ced4da' },
+      { id: 'blue', label: 'Blue', hex: '#1971c2' },
+    ],
   },
   // Computer accessories
   {
@@ -116,6 +152,10 @@ export const PRODUCTS = [
     subcategory: 'computer-accessories',
     price: 34.99,
     description: 'Reliable wireless combo with long battery life.',
+    colors: [
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+    ],
   },
   {
     id: 'cacc-2',
@@ -124,6 +164,7 @@ export const PRODUCTS = [
     subcategory: 'computer-accessories',
     price: 79.0,
     description: 'Single-cable docking with HDMI, USB-A, and Ethernet.',
+    colors: [{ id: 'gray', label: 'Gray', hex: '#868e96' }],
   },
   {
     id: 'cacc-3',
@@ -132,6 +173,8 @@ export const PRODUCTS = [
     subcategory: 'computer-accessories',
     price: 219.99,
     description: 'Sharp 1440p monitor with adjustable stand.',
+    colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
+    sizes: ['24"', '27"', '32"'],
   },
   // Smartphones
   {
@@ -141,6 +184,12 @@ export const PRODUCTS = [
     subcategory: 'smartphones',
     price: 799.0,
     description: 'Flagship smartphone with triple-lens camera.',
+    colors: [
+      { id: 'black', label: 'Midnight Black', hex: '#212529' },
+      { id: 'blue', label: 'Ocean Blue', hex: '#1971c2' },
+      { id: 'gold', label: 'Champagne Gold', hex: '#e8c468' },
+    ],
+    sizes: ['128GB', '256GB', '512GB'],
   },
   {
     id: 'phone-2',
@@ -149,6 +198,11 @@ export const PRODUCTS = [
     subcategory: 'smartphones',
     price: 399.99,
     description: 'Affordable smartphone with all-day battery.',
+    colors: [
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+    ],
+    sizes: ['64GB', '128GB'],
   },
   // Phone accessories
   {
@@ -158,6 +212,10 @@ export const PRODUCTS = [
     subcategory: 'phone-accessories',
     price: 22.99,
     description: '15W wireless charging pad, case-friendly.',
+    colors: [
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'white', label: 'White', hex: '#f8f9fa' },
+    ],
   },
   {
     id: 'pacc-2',
@@ -166,6 +224,13 @@ export const PRODUCTS = [
     subcategory: 'phone-accessories',
     price: 14.99,
     description: 'Drop-tested protective case with raised edges.',
+    colors: [
+      { id: 'black', label: 'Black', hex: '#212529' },
+      { id: 'clear', label: 'Clear', hex: '#e9ecef' },
+      { id: 'red', label: 'Red', hex: '#e03131' },
+      { id: 'blue', label: 'Blue', hex: '#1971c2' },
+    ],
+    sizes: ['iPhone', 'Samsung Galaxy', 'Google Pixel'],
   },
 ]
 

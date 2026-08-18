@@ -30,4 +30,27 @@ describe('PRODUCTS', () => {
     const ids = PRODUCTS.map((product) => product.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
+
+  it('every product has at least one color option', () => {
+    for (const product of PRODUCTS) {
+      expect(product.colors.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('every color has a valid hex value and no duplicate ids within a product', () => {
+    for (const product of PRODUCTS) {
+      const colorIds = product.colors.map((color) => color.id)
+      expect(new Set(colorIds).size).toBe(colorIds.length)
+      for (const color of product.colors) {
+        expect(color.hex).toMatch(/^#[0-9a-f]{6}$/i)
+      }
+    }
+  })
+
+  it('sizes, where present, have no duplicates', () => {
+    for (const product of PRODUCTS) {
+      if (!product.sizes) continue
+      expect(new Set(product.sizes).size).toBe(product.sizes.length)
+    }
+  })
 })

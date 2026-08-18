@@ -25,4 +25,42 @@ describe('ProductDetail', () => {
 
     expect(onBack).toHaveBeenCalledTimes(1)
   })
+
+  it('defaults to the first color and updates the label on selection', async () => {
+    const user = userEvent.setup()
+    render(<ProductDetail product={product} onBack={vi.fn()} />)
+
+    expect(screen.getByText('Color: White')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Black' }))
+
+    expect(screen.getByText('Color: Black')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Black' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'White' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('does not show a color group for a product with only one color', () => {
+    const singleColorProduct = getProduct('tv-1')
+    render(<ProductDetail product={singleColorProduct} onBack={vi.fn()} />)
+
+    expect(screen.queryByText(/^Color:/)).not.toBeInTheDocument()
+  })
+
+  it('shows size options for a product that has them, defaulting to the first', async () => {
+    const user = userEvent.setup()
+    const monitor = getProduct('cacc-3')
+    render(<ProductDetail product={monitor} onBack={vi.fn()} />)
+
+    expect(screen.getByRole('button', { name: '24"' })).toHaveAttribute('aria-pressed', 'true')
+
+    await user.click(screen.getByRole('button', { name: '32"' }))
+
+    expect(screen.getByRole('button', { name: '32"' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: '24"' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('does not show a size group for a product with no sizes', () => {
+    render(<ProductDetail product={product} onBack={vi.fn()} />)
+    expect(screen.queryByText('Size')).not.toBeInTheDocument()
+  })
 })

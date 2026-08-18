@@ -38,6 +38,21 @@ describe('App', () => {
     expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
   })
 
+  it('resets variant selection when navigating from one product detail to another', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /FrostGuard 18cu\.ft/ }))
+    await user.click(screen.getByRole('button', { name: 'Black' }))
+    expect(screen.getByText('Color: Black')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Back to products/ }))
+    await user.click(screen.getByRole('button', { name: /CompactCool Mini Fridge/ }))
+
+    // A different product with its own color list (not the "Black" from before).
+    expect(screen.getByText('Color: White')).toBeInTheDocument()
+  })
+
   it('renders all products by default', () => {
     render(<App />)
     expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()

@@ -78,7 +78,11 @@ function App() {
           onSignOut={handleSignOut}
         />
         {selectedProduct ? (
-          <ProductDetail product={selectedProduct} onBack={() => setSelectedProductId(null)} />
+          <ProductDetail
+            key={selectedProduct.id}
+            product={selectedProduct}
+            onBack={() => setSelectedProductId(null)}
+          />
         ) : (
           <>
             <CategoryNav
