@@ -3,11 +3,20 @@ import { formatCurrency } from '../utils/currency'
 import { getCategory, getSubcategory } from '../data/categories'
 import ProductImage from './ProductImage'
 
-export default function ProductDetail({ product, onBack }) {
+export default function ProductDetail({ product, onBack, onAddToCart }) {
   const category = getCategory(product.category)
   const subcategory = getSubcategory(product.category, product.subcategory)
   const [selectedColor, setSelectedColor] = useState(product.colors[0].id)
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? null)
+  const [quantity, setQuantity] = useState('1')
+  const [added, setAdded] = useState(false)
+
+  function handleAddToCart() {
+    const parsedQuantity = Math.max(1, Number(quantity) || 1)
+    onAddToCart({ colorId: selectedColor, size: selectedSize, quantity: parsedQuantity })
+    setQuantity(String(parsedQuantity))
+    setAdded(true)
+  }
 
   return (
     <section className="product-detail" aria-label={`${product.name} details`}>
@@ -42,7 +51,10 @@ export default function ProductDetail({ product, onBack }) {
                     aria-pressed={selectedColor === color.id}
                     aria-label={color.label}
                     title={color.label}
-                    onClick={() => setSelectedColor(color.id)}
+                    onClick={() => {
+                      setSelectedColor(color.id)
+                      setAdded(false)
+                    }}
                   />
                 ))}
               </div>
@@ -59,13 +71,38 @@ export default function ProductDetail({ product, onBack }) {
                     type="button"
                     className={selectedSize === size ? 'size-chip size-chip-active' : 'size-chip'}
                     aria-pressed={selectedSize === size}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => {
+                      setSelectedSize(size)
+                      setAdded(false)
+                    }}
                   >
                     {size}
                   </button>
                 ))}
               </div>
             </fieldset>
+          )}
+
+          <div className="add-to-cart-row">
+            <label htmlFor="product-quantity">Qty</label>
+            <input
+              id="product-quantity"
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(event) => {
+                setQuantity(event.target.value)
+                setAdded(false)
+              }}
+            />
+            <button type="button" className="add-button" onClick={handleAddToCart}>
+              Add to cart
+            </button>
+          </div>
+          {added && (
+            <p role="status" className="add-to-cart-confirmation">
+              Added to cart.
+            </p>
           )}
         </div>
       </div>

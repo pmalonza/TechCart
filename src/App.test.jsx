@@ -285,4 +285,59 @@ describe('App', () => {
     expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
     expect(window.localStorage.getItem('techcart:session')).toBeNull()
   })
+
+  it('adds an item to the cart and shows the count in the header', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+
+    expect(screen.getByRole('button', { name: 'Cart (1)' })).toBeInTheDocument()
+  })
+
+  it('shows added items in the cart view and allows removing them', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove' }))
+
+    expect(screen.getByText('Your cart is empty.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cart' })).toBeInTheDocument()
+  })
+
+  it('keeps cart items tied to an account across sign out and sign in', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    expect(screen.getByRole('button', { name: 'Cart (1)' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Sign out' }))
+    expect(screen.getByRole('button', { name: 'Cart' })).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByRole('button', { name: 'Cart (1)' })).toBeInTheDocument()
+  })
 })

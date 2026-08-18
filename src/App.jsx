@@ -5,9 +5,12 @@ import ProductList from './components/ProductList'
 import ProductDetail from './components/ProductDetail'
 import Filters from './components/Filters'
 import AuthSection from './components/AuthSection'
+import CartView from './components/CartView'
 import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
+import { loadCart, saveCart } from './data/cart'
+import { makeVariantId } from './utils/cartVariant'
 import { hashPassword } from './utils/hash'
 import './App.css'
 
@@ -20,6 +23,8 @@ function App() {
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [selectedColor, setSelectedColor] = useState(null)
+  const [cart, setCart] = useState(() => loadCart(currentUser?.email))
+  const [showCart, setShowCart] = useState(false)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -28,6 +33,10 @@ function App() {
   useEffect(() => {
     saveSession(currentUser)
   }, [currentUser])
+
+  useEffect(() => {
+    saveCart(currentUser?.email, cart)
+  }, [cart, currentUser])
 
   async function handleSignUp({ name, email, password }) {
     if (findAccountByEmail(accounts, email)) {
@@ -51,16 +60,48 @@ function App() {
     }
 
     setCurrentUser({ name: account.name, email: account.email })
+    setCart(loadCart(account.email))
     return { ok: true }
   }
 
   function handleSignOut() {
     setCurrentUser(null)
+    setCart(loadCart(null))
   }
 
   function handleSelectCategory(categoryId) {
     setSelectedCategory(categoryId)
     setSelectedSubcategory(null)
+  }
+
+  function handleSelectProduct(productId) {
+    setSelectedProductId(productId)
+    setShowCart(false)
+  }
+
+  function handleAddToCart(product, { colorId, size, quantity }) {
+    const variantId = makeVariantId(product.id, colorId, size)
+    setCart((prev) => {
+      const existing = prev.find((item) => item.variantId === variantId)
+      if (existing) {
+        return prev.map((item) =>
+          item.variantId === variantId ? { ...item, quantity: item.quantity + quantity } : item,
+        )
+      }
+      return [...prev, { variantId, productId: product.id, colorId, size, quantity }]
+    })
+  }
+
+  function handleUpdateCartQuantity(variantId, quantity) {
+    setCart((prev) =>
+      quantity <= 0
+        ? prev.filter((item) => item.variantId !== variantId)
+        : prev.map((item) => (item.variantId === variantId ? { ...item, quantity } : item)),
+    )
+  }
+
+  function handleRemoveFromCart(variantId) {
+    setCart((prev) => prev.filter((item) => item.variantId !== variantId))
   }
 
   const filteredProducts = PRODUCTS.filter((product) => {
@@ -74,9 +115,20 @@ function App() {
 
   const selectedProduct = selectedProductId ? getProduct(selectedProductId) : null
 
+  const cartItems = cart
+    .map((item) => {
+      const product = getProduct(item.productId)
+      if (!product) return null
+      const colorLabel = product.colors.find((color) => color.id === item.colorId)?.label
+      return { ...item, product, colorLabel }
+    })
+    .filter(Boolean)
+
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+
   return (
     <div className="app">
-      <Header />
+      <Header cartCount={cartCount} onViewCart={() => setShowCart(true)} />
       <main>
         <AuthSection
           currentUser={currentUser}
@@ -84,11 +136,19 @@ function App() {
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}
         />
-        {selectedProduct ? (
+        {showCart ? (
+          <CartView
+            items={cartItems}
+            onUpdateQuantity={handleUpdateCartQuantity}
+            onRemove={handleRemoveFromCart}
+            onBack={() => setShowCart(false)}
+          />
+        ) : selectedProduct ? (
           <ProductDetail
             key={selectedProduct.id}
             product={selectedProduct}
             onBack={() => setSelectedProductId(null)}
+            onAddToCart={(variant) => handleAddToCart(selectedProduct, variant)}
           />
         ) : (
           <>
@@ -106,7 +166,7 @@ function App() {
               selectedColor={selectedColor}
               onSelectColor={setSelectedColor}
             />
-            <ProductList products={filteredProducts} onSelect={setSelectedProductId} />
+            <ProductList products={filteredProducts} onSelect={handleSelectProduct} />
           </>
         )}
       </main>
