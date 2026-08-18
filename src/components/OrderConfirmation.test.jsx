@@ -19,6 +19,9 @@ function makeOrder(overrides = {}) {
         product,
       },
     ],
+    subtotal: 259.0,
+    discountCode: null,
+    discountAmount: 0,
     total: 259.0,
     address: { street: '123 Main St', city: 'Springfield', postalCode: '12345' },
     paymentMethod: 'paypal',
@@ -27,12 +30,25 @@ function makeOrder(overrides = {}) {
 }
 
 describe('OrderConfirmation', () => {
-  it('shows the order id, items, and total', () => {
+  it('shows the order id, items, subtotal, and total', () => {
     render(<OrderConfirmation order={makeOrder()} onContinueShopping={vi.fn()} />)
 
     expect(screen.getByRole('status')).toHaveTextContent('Order ORD-TEST123 placed. Thank you!')
     expect(screen.getByText(/CompactCool Mini Fridge \(White\) × 2/)).toBeInTheDocument()
+    expect(screen.getByText('Subtotal: $259.00')).toBeInTheDocument()
     expect(screen.getByText('Total: $259.00')).toBeInTheDocument()
+  })
+
+  it('shows the applied discount code and amount', () => {
+    render(
+      <OrderConfirmation
+        order={makeOrder({ discountCode: 'SAVE10', discountAmount: 25.9, total: 233.1 })}
+        onContinueShopping={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Discount (SAVE10): -$25.90')).toBeInTheDocument()
+    expect(screen.getByText('Total: $233.10')).toBeInTheDocument()
   })
 
   it('shows the delivery address and payment method', () => {

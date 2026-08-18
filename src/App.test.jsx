@@ -368,4 +368,36 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: 'Cart' })).toBeInTheDocument()
     expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
   })
+
+  it('applies a discount code and updates the cart total', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+
+    expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('Discount code'), 'WELCOME5')
+    await user.click(screen.getByRole('button', { name: 'Apply' }))
+
+    expect(screen.getByText('Code WELCOME5 applied: -$5.00')).toBeInTheDocument()
+    expect(screen.getByText('Total: $544.99')).toBeInTheDocument()
+  })
+
+  it('shows an error for an invalid discount code and leaves the total unchanged', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+
+    await user.type(screen.getByLabelText('Discount code'), 'NOPE')
+    await user.click(screen.getByRole('button', { name: 'Apply' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Invalid discount code.')
+    expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
+  })
 })

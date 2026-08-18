@@ -18,6 +18,23 @@ function makeItem(overrides = {}) {
   }
 }
 
+function renderCheckoutView(overrides = {}) {
+  const items = overrides.items ?? [makeItem()]
+  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const props = {
+    items,
+    onBack: vi.fn(),
+    onPlaceOrder: vi.fn(),
+    subtotal,
+    discount: null,
+    discountAmount: 0,
+    total: subtotal,
+    ...overrides,
+  }
+  render(<CheckoutView {...props} />)
+  return props
+}
+
 async function fillAddress(user) {
   await user.type(screen.getByLabelText('Street address'), '123 Main St')
   await user.type(screen.getByLabelText('City'), 'Springfield')
@@ -25,17 +42,28 @@ async function fillAddress(user) {
 }
 
 describe('CheckoutView', () => {
-  it('lists items with quantity and shows the total', () => {
-    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={vi.fn()} />)
+  it('lists items with quantity and shows the subtotal and total', () => {
+    renderCheckoutView()
 
     expect(screen.getByText(/CompactCool Mini Fridge \(White\) × 2/)).toBeInTheDocument()
+    expect(screen.getByText('Subtotal: $259.00')).toBeInTheDocument()
     expect(screen.getByText('Total: $259.00')).toBeInTheDocument()
+  })
+
+  it('shows an applied discount', () => {
+    renderCheckoutView({
+      discount: { code: 'SAVE10', type: 'percent', value: 10 },
+      discountAmount: 25.9,
+      total: 233.1,
+    })
+
+    expect(screen.getByText('Discount (SAVE10): -$25.90')).toBeInTheDocument()
+    expect(screen.getByText('Total: $233.10')).toBeInTheDocument()
   })
 
   it('calls onBack when Back to cart is clicked', async () => {
     const user = userEvent.setup()
-    const onBack = vi.fn()
-    render(<CheckoutView items={[makeItem()]} onBack={onBack} onPlaceOrder={vi.fn()} />)
+    const { onBack } = renderCheckoutView()
 
     await user.click(screen.getByRole('button', { name: /Back to cart/ }))
 
@@ -43,7 +71,7 @@ describe('CheckoutView', () => {
   })
 
   it('defaults to the first payment method', () => {
-    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={vi.fn()} />)
+    renderCheckoutView()
 
     expect(screen.getByRole('radio', { name: 'PayPal' })).toBeChecked()
     expect(screen.getByRole('radio', { name: 'Bank transfer' })).not.toBeChecked()
@@ -51,8 +79,7 @@ describe('CheckoutView', () => {
 
   it('rejects placing an order with an incomplete address', async () => {
     const user = userEvent.setup()
-    const onPlaceOrder = vi.fn()
-    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
+    const { onPlaceOrder } = renderCheckoutView()
 
     await user.click(screen.getByRole('button', { name: 'Place order' }))
 
@@ -62,8 +89,7 @@ describe('CheckoutView', () => {
 
   it('calls onPlaceOrder with the address and default payment method', async () => {
     const user = userEvent.setup()
-    const onPlaceOrder = vi.fn()
-    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
+    const { onPlaceOrder } = renderCheckoutView()
 
     await fillAddress(user)
     await user.click(screen.getByRole('button', { name: 'Place order' }))
@@ -76,8 +102,7 @@ describe('CheckoutView', () => {
 
   it('calls onPlaceOrder with the selected payment method', async () => {
     const user = userEvent.setup()
-    const onPlaceOrder = vi.fn()
-    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
+    const { onPlaceOrder } = renderCheckoutView()
 
     await fillAddress(user)
     await user.click(screen.getByRole('radio', { name: 'Bank transfer' }))

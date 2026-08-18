@@ -25,6 +25,12 @@ export default function OrderConfirmation({ order, onContinueShopping }) {
           </li>
         ))}
       </ul>
+      <p className="cart-subtotal">Subtotal: {formatCurrency(order.subtotal)}</p>
+      {order.discountCode && (
+        <p className="discount-applied">
+          Discount ({order.discountCode}): -{formatCurrency(order.discountAmount)}
+        </p>
+      )}
       <p className="checkout-total">Total: {formatCurrency(order.total)}</p>
       <button type="button" className="add-button" onClick={onContinueShopping}>
         Continue shopping

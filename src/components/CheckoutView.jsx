@@ -2,8 +2,15 @@ import { useState } from 'react'
 import { formatCurrency } from '../utils/currency'
 import { PAYMENT_METHODS } from '../data/paymentMethods'
 
-export default function CheckoutView({ items, onBack, onPlaceOrder }) {
-  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+export default function CheckoutView({
+  items,
+  onBack,
+  onPlaceOrder,
+  subtotal,
+  discount,
+  discountAmount,
+  total,
+}) {
   const [address, setAddress] = useState({ street: '', city: '', postalCode: '' })
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS[0].id)
   const [error, setError] = useState('')
@@ -40,6 +47,12 @@ export default function CheckoutView({ items, onBack, onPlaceOrder }) {
           </li>
         ))}
       </ul>
+      <p className="cart-subtotal">Subtotal: {formatCurrency(subtotal)}</p>
+      {discount && (
+        <p className="discount-applied">
+          Discount ({discount.code}): -{formatCurrency(discountAmount)}
+        </p>
+      )}
       <p className="checkout-total">Total: {formatCurrency(total)}</p>
 
       <fieldset className="checkout-section">

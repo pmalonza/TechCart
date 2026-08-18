@@ -12,6 +12,7 @@ import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
 import { loadCart, saveCart } from './data/cart'
+import { calculateDiscount, findDiscountCode } from './data/discountCodes'
 import { makeVariantId } from './utils/cartVariant'
 import { hashPassword } from './utils/hash'
 import './App.css'
@@ -28,6 +29,7 @@ function App() {
   const [cart, setCart] = useState(() => loadCart(currentUser?.email))
   const [view, setView] = useState('browse')
   const [lastOrder, setLastOrder] = useState(null)
+  const [appliedDiscount, setAppliedDiscount] = useState(null)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -107,16 +109,33 @@ function App() {
     setCart((prev) => prev.filter((item) => item.variantId !== variantId))
   }
 
+  function handleApplyDiscount(code) {
+    const found = findDiscountCode(code)
+    if (!found) {
+      return { ok: false, message: 'Invalid discount code.' }
+    }
+    setAppliedDiscount(found)
+    return { ok: true }
+  }
+
+  function handleRemoveDiscount() {
+    setAppliedDiscount(null)
+  }
+
   function handlePlaceOrder({ address, paymentMethod }) {
     const order = {
       id: `ORD-${Date.now().toString(36).toUpperCase()}`,
       items: cartItems,
-      total: cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+      subtotal: cartSubtotal,
+      discountCode: appliedDiscount?.code ?? null,
+      discountAmount: cartDiscountAmount,
+      total: cartTotal,
       address,
       paymentMethod,
     }
     setLastOrder(order)
     setCart([])
+    setAppliedDiscount(null)
     setView('confirmation')
   }
 
@@ -147,6 +166,9 @@ function App() {
     .filter(Boolean)
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const cartSubtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const cartDiscountAmount = calculateDiscount(appliedDiscount, cartSubtotal)
+  const cartTotal = cartSubtotal - cartDiscountAmount
 
   return (
     <div className="app">
@@ -165,6 +187,10 @@ function App() {
             items={cartItems}
             onBack={() => setView('cart')}
             onPlaceOrder={handlePlaceOrder}
+            subtotal={cartSubtotal}
+            discount={appliedDiscount}
+            discountAmount={cartDiscountAmount}
+            total={cartTotal}
           />
         ) : view === 'cart' ? (
           <CartView
@@ -173,6 +199,12 @@ function App() {
             onRemove={handleRemoveFromCart}
             onBack={() => setView('browse')}
             onCheckout={() => setView('checkout')}
+            subtotal={cartSubtotal}
+            discount={appliedDiscount}
+            discountAmount={cartDiscountAmount}
+            total={cartTotal}
+            onApplyDiscount={handleApplyDiscount}
+            onRemoveDiscount={handleRemoveDiscount}
           />
         ) : selectedProduct ? (
           <ProductDetail

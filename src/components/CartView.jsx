@@ -34,8 +34,37 @@ function QuantityInput({ variantId, quantity, onUpdateQuantity }) {
   )
 }
 
-export default function CartView({ items, onUpdateQuantity, onRemove, onBack, onCheckout }) {
-  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+export default function CartView({
+  items,
+  onUpdateQuantity,
+  onRemove,
+  onBack,
+  onCheckout,
+  subtotal,
+  discount,
+  discountAmount,
+  total,
+  onApplyDiscount,
+  onRemoveDiscount,
+}) {
+  const [codeInput, setCodeInput] = useState('')
+  const [discountError, setDiscountError] = useState('')
+
+  function handleApplyDiscount(event) {
+    event.preventDefault()
+    const result = onApplyDiscount(codeInput)
+    if (!result.ok) {
+      setDiscountError(result.message)
+      return
+    }
+    setDiscountError('')
+    setCodeInput('')
+  }
+
+  function handleRemoveDiscount() {
+    onRemoveDiscount()
+    setDiscountError('')
+  }
 
   return (
     <section className="cart-view" aria-label="Shopping cart">
@@ -73,6 +102,38 @@ export default function CartView({ items, onUpdateQuantity, onRemove, onBack, on
               </li>
             ))}
           </ul>
+          <form className="discount-form" onSubmit={handleApplyDiscount}>
+            <label htmlFor="discount-code">Discount code</label>
+            <input
+              id="discount-code"
+              type="text"
+              value={codeInput}
+              onChange={(event) => setCodeInput(event.target.value)}
+            />
+            <button type="submit" className="text-button">
+              Apply
+            </button>
+          </form>
+          {discountError && (
+            <p className="form-error" role="alert">
+              {discountError}
+            </p>
+          )}
+          {discount && (
+            <p className="discount-applied">
+              Code {discount.code} applied: -{formatCurrency(discountAmount)}{' '}
+              <button
+                type="button"
+                className="text-button"
+                aria-label="Remove discount code"
+                onClick={handleRemoveDiscount}
+              >
+                Remove
+              </button>
+            </p>
+          )}
+
+          <p className="cart-subtotal">Subtotal: {formatCurrency(subtotal)}</p>
           <p className="cart-total">Total: {formatCurrency(total)}</p>
           <button type="button" className="add-button" onClick={onCheckout}>
             Checkout
