@@ -75,11 +75,15 @@ describe('App', () => {
     expect(screen.queryByRole('button', { name: 'All Phones' })).not.toBeInTheDocument()
   })
 
+  async function goToSignUpTab(user) {
+    await user.click(screen.getByRole('tab', { name: 'Create account' }))
+  }
+
   it('creates an account and persists it to localStorage', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByText('Create account', { selector: 'summary' }))
+    await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
@@ -99,7 +103,7 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByText('Create account', { selector: 'summary' }))
+    await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
@@ -107,6 +111,7 @@ describe('App', () => {
     })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
+    await goToSignUpTab(user)
     await fillSignUpForm(user, {
       name: 'Someone Else',
       email: 'ADA@example.com',
@@ -117,5 +122,81 @@ describe('App', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('An account with this email already exists.')
     const stored = JSON.parse(window.localStorage.getItem('techcart:accounts'))
     expect(stored).toHaveLength(1)
+  })
+
+  it('signs in with correct credentials and persists the session', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByText('Signed in as')).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(JSON.parse(window.localStorage.getItem('techcart:session'))).toEqual({
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+    })
+  })
+
+  it('rejects sign in with the wrong password', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Password'), 'wrong-password')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Incorrect password.')
+    expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
+  })
+
+  it('rejects sign in for an email with no account', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Email'), 'nobody@example.com')
+    await user.type(screen.getByLabelText('Password'), 'whatever123')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('No account found with that email.')
+  })
+
+  it('signs out and clears the session', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      password: 'longenoughpw',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await user.type(screen.getByLabelText('Password'), 'longenoughpw')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await user.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
+    expect(window.localStorage.getItem('techcart:session')).toBeNull()
   })
 })

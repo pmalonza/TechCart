@@ -5,6 +5,7 @@ import ProductList from './components/ProductList'
 import AuthSection from './components/AuthSection'
 import { PRODUCTS } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
+import { loadSession, saveSession } from './data/session'
 import { hashPassword } from './utils/hash'
 import './App.css'
 
@@ -12,10 +13,15 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedSubcategory, setSelectedSubcategory] = useState(null)
   const [accounts, setAccounts] = useState(loadAccounts)
+  const [currentUser, setCurrentUser] = useState(loadSession)
 
   useEffect(() => {
     saveAccounts(accounts)
   }, [accounts])
+
+  useEffect(() => {
+    saveSession(currentUser)
+  }, [currentUser])
 
   async function handleSignUp({ name, email, password }) {
     if (findAccountByEmail(accounts, email)) {
@@ -25,6 +31,25 @@ function App() {
     const passwordHash = await hashPassword(password)
     setAccounts((prev) => [...prev, { name, email, passwordHash }])
     return { ok: true }
+  }
+
+  async function handleSignIn({ email, password }) {
+    const account = findAccountByEmail(accounts, email)
+    if (!account) {
+      return { ok: false, message: 'No account found with that email.' }
+    }
+
+    const passwordHash = await hashPassword(password)
+    if (passwordHash !== account.passwordHash) {
+      return { ok: false, message: 'Incorrect password.' }
+    }
+
+    setCurrentUser({ name: account.name, email: account.email })
+    return { ok: true }
+  }
+
+  function handleSignOut() {
+    setCurrentUser(null)
   }
 
   function handleSelectCategory(categoryId) {
@@ -42,7 +67,12 @@ function App() {
     <div className="app">
       <Header />
       <main>
-        <AuthSection onSignUp={handleSignUp} />
+        <AuthSection
+          currentUser={currentUser}
+          onSignUp={handleSignUp}
+          onSignIn={handleSignIn}
+          onSignOut={handleSignOut}
+        />
         <CategoryNav
           selectedCategory={selectedCategory}
           selectedSubcategory={selectedSubcategory}

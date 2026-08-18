@@ -12,5 +12,9 @@ export default defineConfig({
     setupFiles: './src/test/setup.js',
     globals: true,
     pool: 'threads',
+    // This sandboxed environment is consistently slow (crypto.subtle hashing
+    // and multi-step flows can take several seconds), so the 5s default
+    // times out legitimate tests rather than catching hangs.
+    testTimeout: 20000,
   },
 })
