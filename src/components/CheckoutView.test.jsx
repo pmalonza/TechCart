@@ -18,6 +18,12 @@ function makeItem(overrides = {}) {
   }
 }
 
+async function fillAddress(user) {
+  await user.type(screen.getByLabelText('Street address'), '123 Main St')
+  await user.type(screen.getByLabelText('City'), 'Springfield')
+  await user.type(screen.getByLabelText('Postal code'), '12345')
+}
+
 describe('CheckoutView', () => {
   it('lists items with quantity and shows the total', () => {
     render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={vi.fn()} />)
@@ -36,13 +42,50 @@ describe('CheckoutView', () => {
     expect(onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('calls onPlaceOrder when Place order is clicked', async () => {
+  it('defaults to the first payment method', () => {
+    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={vi.fn()} />)
+
+    expect(screen.getByRole('radio', { name: 'PayPal' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Bank transfer' })).not.toBeChecked()
+  })
+
+  it('rejects placing an order with an incomplete address', async () => {
     const user = userEvent.setup()
     const onPlaceOrder = vi.fn()
     render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
 
     await user.click(screen.getByRole('button', { name: 'Place order' }))
 
-    expect(onPlaceOrder).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('alert')).toHaveTextContent('Enter a complete delivery address.')
+    expect(onPlaceOrder).not.toHaveBeenCalled()
+  })
+
+  it('calls onPlaceOrder with the address and default payment method', async () => {
+    const user = userEvent.setup()
+    const onPlaceOrder = vi.fn()
+    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
+
+    await fillAddress(user)
+    await user.click(screen.getByRole('button', { name: 'Place order' }))
+
+    expect(onPlaceOrder).toHaveBeenCalledWith({
+      address: { street: '123 Main St', city: 'Springfield', postalCode: '12345' },
+      paymentMethod: 'paypal',
+    })
+  })
+
+  it('calls onPlaceOrder with the selected payment method', async () => {
+    const user = userEvent.setup()
+    const onPlaceOrder = vi.fn()
+    render(<CheckoutView items={[makeItem()]} onBack={vi.fn()} onPlaceOrder={onPlaceOrder} />)
+
+    await fillAddress(user)
+    await user.click(screen.getByRole('radio', { name: 'Bank transfer' }))
+    await user.click(screen.getByRole('button', { name: 'Place order' }))
+
+    expect(onPlaceOrder).toHaveBeenCalledWith({
+      address: { street: '123 Main St', city: 'Springfield', postalCode: '12345' },
+      paymentMethod: 'bank',
+    })
   })
 })

@@ -1,10 +1,17 @@
 import { formatCurrency } from '../utils/currency'
+import { getPaymentMethodLabel } from '../data/paymentMethods'
 
 export default function OrderConfirmation({ order, onContinueShopping }) {
   return (
     <section className="order-confirmation" aria-label="Order confirmation">
       <p role="status" className="order-confirmation-message">
         Order {order.id} placed. Thank you!
+      </p>
+      <p className="order-confirmation-detail">
+        Shipping to {order.address.street}, {order.address.city} {order.address.postalCode}
+      </p>
+      <p className="order-confirmation-detail">
+        Payment method: {getPaymentMethodLabel(order.paymentMethod)}
       </p>
       <ul className="checkout-items">
         {order.items.map((item) => (

@@ -107,11 +107,13 @@ function App() {
     setCart((prev) => prev.filter((item) => item.variantId !== variantId))
   }
 
-  function handlePlaceOrder() {
+  function handlePlaceOrder({ address, paymentMethod }) {
     const order = {
       id: `ORD-${Date.now().toString(36).toUpperCase()}`,
       items: cartItems,
       total: cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+      address,
+      paymentMethod,
     }
     setLastOrder(order)
     setCart([])

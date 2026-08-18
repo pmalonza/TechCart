@@ -353,9 +353,15 @@ describe('App', () => {
     expect(screen.getByText(/VividView 55" 4K QLED TV/)).toBeInTheDocument()
     expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
 
+    await user.type(screen.getByLabelText('Street address'), '123 Main St')
+    await user.type(screen.getByLabelText('City'), 'Springfield')
+    await user.type(screen.getByLabelText('Postal code'), '12345')
+    await user.click(screen.getByRole('radio', { name: 'Bank transfer' }))
     await user.click(screen.getByRole('button', { name: 'Place order' }))
 
     expect(screen.getByRole('status')).toHaveTextContent(/Order ORD-.+ placed\. Thank you!/)
+    expect(screen.getByText('Shipping to 123 Main St, Springfield 12345')).toBeInTheDocument()
+    expect(screen.getByText('Payment method: Bank transfer')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Continue shopping' }))
 

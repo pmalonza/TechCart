@@ -20,6 +20,8 @@ function makeOrder(overrides = {}) {
       },
     ],
     total: 259.0,
+    address: { street: '123 Main St', city: 'Springfield', postalCode: '12345' },
+    paymentMethod: 'paypal',
     ...overrides,
   }
 }
@@ -31,6 +33,21 @@ describe('OrderConfirmation', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Order ORD-TEST123 placed. Thank you!')
     expect(screen.getByText(/CompactCool Mini Fridge \(White\) × 2/)).toBeInTheDocument()
     expect(screen.getByText('Total: $259.00')).toBeInTheDocument()
+  })
+
+  it('shows the delivery address and payment method', () => {
+    render(<OrderConfirmation order={makeOrder()} onContinueShopping={vi.fn()} />)
+
+    expect(screen.getByText('Shipping to 123 Main St, Springfield 12345')).toBeInTheDocument()
+    expect(screen.getByText('Payment method: PayPal')).toBeInTheDocument()
+  })
+
+  it('shows the bank transfer label when that method was selected', () => {
+    render(
+      <OrderConfirmation order={makeOrder({ paymentMethod: 'bank' })} onContinueShopping={vi.fn()} />,
+    )
+
+    expect(screen.getByText('Payment method: Bank transfer')).toBeInTheDocument()
   })
 
   it('calls onContinueShopping when clicked', async () => {
