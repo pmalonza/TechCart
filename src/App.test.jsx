@@ -430,4 +430,19 @@ describe('App', () => {
     const stored = JSON.parse(window.localStorage.getItem('techcart:accounts'))
     expect(stored[0].name).toBe('Ada King')
   })
+
+  it('opens and closes the help view from the header', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Help' }))
+
+    expect(screen.getByRole('heading', { name: 'Help' })).toBeInTheDocument()
+    expect(screen.getByText('How do I add items to my cart?')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+
+    expect(screen.queryByRole('heading', { name: 'Help' })).not.toBeInTheDocument()
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+  })
 })

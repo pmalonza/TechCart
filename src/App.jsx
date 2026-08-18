@@ -9,6 +9,7 @@ import CartView from './components/CartView'
 import CheckoutView from './components/CheckoutView'
 import OrderConfirmation from './components/OrderConfirmation'
 import ProfileView from './components/ProfileView'
+import HelpView from './components/HelpView'
 import { PRODUCTS, getProduct } from './data/products'
 import { loadAccounts, saveAccounts, findAccountByEmail } from './data/accounts'
 import { loadSession, saveSession } from './data/session'
@@ -183,7 +184,11 @@ function App() {
 
   return (
     <div className="app">
-      <Header cartCount={cartCount} onViewCart={() => setView('cart')} />
+      <Header
+        cartCount={cartCount}
+        onViewCart={() => setView('cart')}
+        onViewHelp={() => setView('help')}
+      />
       <main>
         <AuthSection
           currentUser={currentUser}
@@ -192,7 +197,9 @@ function App() {
           onSignOut={handleSignOut}
           onViewProfile={() => setView('profile')}
         />
-        {view === 'profile' && currentUser ? (
+        {view === 'help' ? (
+          <HelpView onBack={() => setView('browse')} />
+        ) : view === 'profile' && currentUser ? (
           <ProfileView
             user={currentUser}
             onBack={() => setView('browse')}
