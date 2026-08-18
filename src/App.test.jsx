@@ -445,4 +445,80 @@ describe('App', () => {
     expect(screen.queryByRole('heading', { name: 'Help' })).not.toBeInTheDocument()
     expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
   })
+
+  it('resets a forgotten password and signs in with the new password', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'originalpw123',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.click(screen.getByRole('button', { name: 'Send reset code' }))
+
+    const code = screen.getByText(/the code is \d{6}/).textContent.match(/\d{6}/)[0]
+    await user.type(screen.getByLabelText('Reset code'), code)
+    await user.type(screen.getByLabelText('New password'), 'brandnewpw456')
+    await user.type(screen.getByLabelText('Confirm new password'), 'brandnewpw456')
+    await user.click(screen.getByRole('button', { name: 'Reset password' }))
+
+    expect(
+      screen.getByText('Password reset. You can now sign in with your new password.'),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Back to sign in' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'brandnewpw456')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByText('Signed in as')).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+  })
+
+  it('rejects sign in with the old password after a reset', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'originalpw123',
+    })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.click(screen.getByRole('button', { name: 'Send reset code' }))
+
+    const code = screen.getByText(/the code is \d{6}/).textContent.match(/\d{6}/)[0]
+    await user.type(screen.getByLabelText('Reset code'), code)
+    await user.type(screen.getByLabelText('New password'), 'brandnewpw456')
+    await user.type(screen.getByLabelText('Confirm new password'), 'brandnewpw456')
+    await user.click(screen.getByRole('button', { name: 'Reset password' }))
+
+    await user.click(screen.getByRole('button', { name: 'Back to sign in' }))
+    await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(screen.getByLabelText('Password'), 'originalpw123')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Incorrect password.')
+  })
+
+  it('rejects a reset request for an email with no account', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
+    await user.type(screen.getByLabelText('Email'), 'nobody@gmail.com')
+    await user.click(screen.getByRole('button', { name: 'Send reset code' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('No account found with that email.')
+  })
 })

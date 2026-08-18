@@ -51,4 +51,14 @@ describe('SignInForm', () => {
 
     expect(screen.getByLabelText('Email')).toHaveValue('')
   })
+
+  it('calls onForgotPassword when Forgot password? is clicked', async () => {
+    const user = userEvent.setup()
+    const onForgotPassword = vi.fn()
+    render(<SignInForm onSignIn={vi.fn()} onForgotPassword={onForgotPassword} />)
+
+    await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
+
+    expect(onForgotPassword).toHaveBeenCalledTimes(1)
+  })
 })

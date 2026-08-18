@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function SignInForm({ onSignIn }) {
+export default function SignInForm({ onSignIn, onForgotPassword }) {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -55,6 +55,9 @@ export default function SignInForm({ onSignIn }) {
       </div>
       <button type="submit" className="add-button" disabled={submitting}>
         {submitting ? 'Signing in…' : 'Sign in'}
+      </button>
+      <button type="button" className="text-button" onClick={onForgotPassword}>
+        Forgot password?
       </button>
       {error && (
         <p className="form-error" role="alert">

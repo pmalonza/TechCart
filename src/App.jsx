@@ -17,6 +17,7 @@ import { loadCart, saveCart } from './data/cart'
 import { calculateDiscount, findDiscountCode } from './data/discountCodes'
 import { makeVariantId } from './utils/cartVariant'
 import { hashPassword } from './utils/hash'
+import { generateResetCode } from './utils/resetCode'
 import './App.css'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
   const [view, setView] = useState('browse')
   const [lastOrder, setLastOrder] = useState(null)
   const [appliedDiscount, setAppliedDiscount] = useState(null)
+  const [passwordReset, setPasswordReset] = useState(null)
 
   useEffect(() => {
     saveAccounts(accounts)
@@ -75,6 +77,36 @@ function App() {
     setCurrentUser(null)
     setCart(loadCart(null))
     setView('browse')
+  }
+
+  function handleRequestPasswordReset(email) {
+    const account = findAccountByEmail(accounts, email)
+    if (!account) {
+      return { ok: false, message: 'No account found with that email.' }
+    }
+
+    const code = generateResetCode()
+    setPasswordReset({ email: account.email, code })
+    return { ok: true, code }
+  }
+
+  async function handleResetPassword({ email, code, newPassword }) {
+    const isMatch =
+      passwordReset &&
+      passwordReset.email.toLowerCase() === email.toLowerCase() &&
+      passwordReset.code === code
+    if (!isMatch) {
+      return { ok: false, message: 'Invalid or expired reset code.' }
+    }
+
+    const passwordHash = await hashPassword(newPassword)
+    setAccounts((prev) =>
+      prev.map((account) =>
+        account.email.toLowerCase() === email.toLowerCase() ? { ...account, passwordHash } : account,
+      ),
+    )
+    setPasswordReset(null)
+    return { ok: true }
   }
 
   function handleUpdateProfile({ name }) {
@@ -196,6 +228,8 @@ function App() {
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}
           onViewProfile={() => setView('profile')}
+          onRequestPasswordReset={handleRequestPasswordReset}
+          onResetPassword={handleResetPassword}
         />
         {view === 'help' ? (
           <HelpView onBack={() => setView('browse')} />

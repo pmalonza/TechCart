@@ -1,8 +1,17 @@
 import { useState } from 'react'
 import SignUpForm from './SignUpForm'
 import SignInForm from './SignInForm'
+import ForgotPasswordForm from './ForgotPasswordForm'
 
-export default function AuthSection({ currentUser, onSignUp, onSignIn, onSignOut, onViewProfile }) {
+export default function AuthSection({
+  currentUser,
+  onSignUp,
+  onSignIn,
+  onSignOut,
+  onViewProfile,
+  onRequestPasswordReset,
+  onResetPassword,
+}) {
   const [mode, setMode] = useState('signin')
   const [justCreated, setJustCreated] = useState('')
 
@@ -39,30 +48,40 @@ export default function AuthSection({ currentUser, onSignUp, onSignIn, onSignOut
           Account created for {justCreated}. Sign in below.
         </p>
       )}
-      <div className="auth-tabs" role="tablist" aria-label="Account access">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === 'signin'}
-          className={mode === 'signin' ? 'auth-tab auth-tab-active' : 'auth-tab'}
-          onClick={() => setMode('signin')}
-        >
-          Sign in
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === 'signup'}
-          className={mode === 'signup' ? 'auth-tab auth-tab-active' : 'auth-tab'}
-          onClick={() => setMode('signup')}
-        >
-          Create account
-        </button>
-      </div>
-      {mode === 'signin' ? (
-        <SignInForm onSignIn={onSignIn} />
+      {mode === 'reset' ? (
+        <ForgotPasswordForm
+          onRequestReset={onRequestPasswordReset}
+          onResetPassword={onResetPassword}
+          onCancel={() => setMode('signin')}
+        />
       ) : (
-        <SignUpForm onSignUp={handleSignUp} />
+        <>
+          <div className="auth-tabs" role="tablist" aria-label="Account access">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signin'}
+              className={mode === 'signin' ? 'auth-tab auth-tab-active' : 'auth-tab'}
+              onClick={() => setMode('signin')}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signup'}
+              className={mode === 'signup' ? 'auth-tab auth-tab-active' : 'auth-tab'}
+              onClick={() => setMode('signup')}
+            >
+              Create account
+            </button>
+          </div>
+          {mode === 'signin' ? (
+            <SignInForm onSignIn={onSignIn} onForgotPassword={() => setMode('reset')} />
+          ) : (
+            <SignUpForm onSignUp={handleSignUp} />
+          )}
+        </>
       )}
     </details>
   )
