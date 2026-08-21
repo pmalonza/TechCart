@@ -2,20 +2,47 @@ import { useState } from 'react'
 import { formatCurrency } from '../utils/currency'
 import { getCategory, getSubcategory } from '../data/categories'
 import ProductImage from './ProductImage'
+import { getProductImage, removeProductImage, saveProductImage } from '../data/productImages'
+import ProductReviews from './ProductReviews'
 
-export default function ProductDetail({ product, onBack, onAddToCart }) {
+export default function ProductDetail({
+  product,
+  onBack,
+  onAddToCart,
+  inWishlist,
+  onToggleWishlist,
+}) {
   const category = getCategory(product.category)
   const subcategory = getSubcategory(product.category, product.subcategory)
   const [selectedColor, setSelectedColor] = useState(product.colors[0].id)
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] ?? null)
   const [quantity, setQuantity] = useState('1')
   const [added, setAdded] = useState(false)
+  const [imageUrl, setImageUrl] = useState(() => getProductImage(product.id))
 
   function handleAddToCart() {
     const parsedQuantity = Math.max(1, Number(quantity) || 1)
     onAddToCart({ colorId: selectedColor, size: selectedSize, quantity: parsedQuantity })
     setQuantity(String(parsedQuantity))
     setAdded(true)
+  }
+
+  function handleImageChange(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result
+      saveProductImage(product.id, dataUrl)
+      setImageUrl(dataUrl)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function handleRemoveImage() {
+    removeProductImage(product.id)
+    setImageUrl(null)
   }
 
   return (
@@ -25,16 +52,61 @@ export default function ProductDetail({ product, onBack, onAddToCart }) {
       </button>
       <div className="product-detail-body">
         <div className="product-detail-image">
-          <ProductImage subcategory={product.subcategory} />
+          <ProductImage subcategory={product.subcategory} imageUrl={imageUrl} />
+          <div className="product-image-upload">
+            <label htmlFor="product-image-upload" className="text-button">
+              {imageUrl ? 'Change photo' : 'Add a photo'}
+            </label>
+            <input
+              id="product-image-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="visually-hidden"
+            />
+            {imageUrl && (
+              <button type="button" className="text-button" onClick={handleRemoveImage}>
+                Remove photo
+              </button>
+            )}
+          </div>
         </div>
         <div className="product-detail-info">
           <p className="product-detail-breadcrumb">
             {category?.label}
             {subcategory && <> &rsaquo; {subcategory.label}</>}
           </p>
-          <h2>{product.name}</h2>
+          <div className="product-detail-title-row">
+            <h2>{product.name}</h2>
+            <button
+              type="button"
+              className="wishlist-toggle"
+              aria-pressed={inWishlist}
+              onClick={onToggleWishlist}
+            >
+              {inWishlist ? '♥ In wishlist' : '♡ Add to wishlist'}
+            </button>
+          </div>
           <p className="product-detail-description">{product.description}</p>
-          <p className="product-detail-price">{formatCurrency(product.price)}</p>
+          <p className="product-detail-price">
+            {product.originalPrice > product.price && (
+              <span className="product-detail-original-price">
+                {formatCurrency(product.originalPrice)}
+              </span>
+            )}
+            {formatCurrency(product.price)}
+          </p>
+
+          {product.specs && product.specs.length > 0 && (
+            <dl className="product-detail-specs">
+              {product.specs.map((spec) => (
+                <div key={spec.label} className="product-detail-spec">
+                  <dt>{spec.label}</dt>
+                  <dd>{spec.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
 
           {product.colors.length > 1 && (
             <fieldset className="variant-group">
@@ -106,6 +178,7 @@ export default function ProductDetail({ product, onBack, onAddToCart }) {
           )}
         </div>
       </div>
+      <ProductReviews productId={product.id} />
     </section>
   )
 }

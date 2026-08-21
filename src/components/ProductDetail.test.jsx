@@ -1,11 +1,16 @@
-import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ProductDetail from './ProductDetail'
 import { getProduct } from '../data/products'
+import { getProductImage } from '../data/productImages'
 
 describe('ProductDetail', () => {
   const product = getProduct('ref-1')
+
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
 
   it('shows the product name, description, price, and breadcrumb', () => {
     render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
@@ -14,6 +19,64 @@ describe('ProductDetail', () => {
     expect(screen.getByText(product.description)).toBeInTheDocument()
     expect(screen.getByText('$649.99')).toBeInTheDocument()
     expect(screen.getByText('Electronics › Refrigerators')).toBeInTheDocument()
+  })
+
+  it('shows Add to wishlist when not wishlisted and calls onToggleWishlist', async () => {
+    const user = userEvent.setup()
+    const onToggleWishlist = vi.fn()
+    render(
+      <ProductDetail
+        product={product}
+        onBack={vi.fn()}
+        onAddToCart={vi.fn()}
+        inWishlist={false}
+        onToggleWishlist={onToggleWishlist}
+      />,
+    )
+
+    const button = screen.getByRole('button', { name: /Add to wishlist/ })
+    expect(button).toHaveAttribute('aria-pressed', 'false')
+
+    await user.click(button)
+
+    expect(onToggleWishlist).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows In wishlist when already wishlisted', () => {
+    render(
+      <ProductDetail
+        product={product}
+        onBack={vi.fn()}
+        onAddToCart={vi.fn()}
+        inWishlist
+        onToggleWishlist={vi.fn()}
+      />,
+    )
+
+    const button = screen.getByRole('button', { name: /In wishlist/ })
+    expect(button).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('does not show a strikethrough price for a product with no sale', () => {
+    render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+    expect(screen.queryByText('$649.99', { selector: '.product-detail-original-price' })).not.toBeInTheDocument()
+  })
+
+  it('shows the original price struck through for an on-sale product', () => {
+    const onSaleProduct = getProduct('tv-2')
+    render(<ProductDetail product={onSaleProduct} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+
+    expect(screen.getByText('$1,299.00')).toBeInTheDocument()
+    expect(screen.getByText('$999.00')).toBeInTheDocument()
+  })
+
+  it('shows the product specs', () => {
+    render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+
+    for (const spec of product.specs) {
+      expect(screen.getByText(spec.label)).toBeInTheDocument()
+      expect(screen.getByText(spec.value)).toBeInTheDocument()
+    }
   })
 
   it('calls onBack when the back button is clicked', async () => {
@@ -99,5 +162,43 @@ describe('ProductDetail', () => {
     await user.click(screen.getByRole('button', { name: 'Add to cart' }))
 
     expect(screen.getByRole('status')).toHaveTextContent('Added to cart.')
+  })
+
+  it('shows an "Add a photo" prompt with no uploaded image', () => {
+    render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+    expect(screen.getByText('Add a photo')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Remove photo' })).not.toBeInTheDocument()
+  })
+
+  it('uploads a photo, shows it, and persists it', async () => {
+    const user = userEvent.setup()
+    render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+
+    const file = new File(['fake-image-bytes'], 'fridge.png', { type: 'image/png' })
+    const input = document.getElementById('product-image-upload')
+    await user.upload(input, file)
+
+    await waitFor(() => {
+      expect(document.querySelector('.product-image-photo')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Change photo')).toBeInTheDocument()
+    expect(getProductImage(product.id)).toMatch(/^data:/)
+  })
+
+  it('removes an uploaded photo', async () => {
+    const user = userEvent.setup()
+    render(<ProductDetail product={product} onBack={vi.fn()} onAddToCart={vi.fn()} />)
+
+    const file = new File(['fake-image-bytes'], 'fridge.png', { type: 'image/png' })
+    const input = document.getElementById('product-image-upload')
+    await user.upload(input, file)
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Remove photo' })).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Remove photo' }))
+
+    expect(screen.getByText('Add a photo')).toBeInTheDocument()
+    expect(getProductImage(product.id)).toBeNull()
   })
 })
