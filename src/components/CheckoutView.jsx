@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { formatCurrency } from '../utils/currency'
 import { PAYMENT_METHODS } from '../data/paymentMethods'
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function CheckoutView({
   items,
   onBack,
@@ -9,9 +11,18 @@ export default function CheckoutView({
   subtotal,
   discount,
   discountAmount,
+  deliveryFee,
   total,
+  defaultEmail = '',
+  savedAddresses = [],
 }) {
-  const [address, setAddress] = useState({ street: '', city: '', postalCode: '' })
+  const defaultAddress = savedAddresses.find((saved) => saved.isDefault)
+  const [address, setAddress] = useState(() =>
+    defaultAddress
+      ? { street: defaultAddress.street, city: defaultAddress.city, postalCode: defaultAddress.postalCode }
+      : { street: '', city: '', postalCode: '' },
+  )
+  const [email, setEmail] = useState(defaultEmail)
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS[0].id)
   const [error, setError] = useState('')
 
@@ -25,8 +36,12 @@ export default function CheckoutView({
       setError('Enter a complete delivery address.')
       return
     }
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      setError('Enter a valid email for order updates.')
+      return
+    }
     setError('')
-    onPlaceOrder({ address, paymentMethod })
+    onPlaceOrder({ address, paymentMethod, email: email.trim() })
   }
 
   return (
@@ -53,7 +68,45 @@ export default function CheckoutView({
           Discount ({discount.code}): -{formatCurrency(discountAmount)}
         </p>
       )}
+      <p className="cart-subtotal">
+        Delivery: {deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Free'}
+      </p>
       <p className="checkout-total">Total: {formatCurrency(total)}</p>
+
+      <fieldset className="checkout-section">
+        <legend>Order updates</legend>
+        <div className="field">
+          <label htmlFor="checkout-email">Email</label>
+          <input
+            id="checkout-email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </div>
+      </fieldset>
+
+      {savedAddresses.length > 0 && (
+        <fieldset className="checkout-section">
+          <legend>Saved addresses</legend>
+          <div className="saved-address-list">
+            {savedAddresses.map((saved) => (
+              <button
+                key={saved.id}
+                type="button"
+                className="saved-address-option"
+                onClick={() =>
+                  setAddress({ street: saved.street, city: saved.city, postalCode: saved.postalCode })
+                }
+              >
+                {saved.label ? `${saved.label}: ` : ''}
+                {saved.street}, {saved.city} {saved.postalCode}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       <fieldset className="checkout-section">
         <legend>Delivery address</legend>
