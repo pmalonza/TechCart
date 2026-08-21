@@ -12,6 +12,13 @@ export const PRODUCTS = [
       { id: 'black', label: 'Black', hex: '#212529' },
       { id: 'stainless', label: 'Stainless Steel', hex: '#adb5bd' },
     ],
+    specs: [
+      { label: 'Total capacity', value: '18 cu.ft (13 cu.ft fridge / 5 cu.ft freezer)' },
+      { label: 'Type', value: 'Top-freezer' },
+      { label: 'Energy rating', value: 'ENERGY STAR certified' },
+      { label: 'Shelving', value: 'Adjustable tempered glass' },
+      { label: 'Dimensions', value: '30"W x 66"H x 32"D' },
+    ],
   },
   {
     id: 'ref-2',
@@ -23,6 +30,13 @@ export const PRODUCTS = [
     colors: [
       { id: 'stainless', label: 'Stainless Steel', hex: '#adb5bd' },
       { id: 'black', label: 'Black Stainless', hex: '#343a40' },
+    ],
+    specs: [
+      { label: 'Total capacity', value: '25 cu.ft (18 cu.ft fridge / 7 cu.ft freezer)' },
+      { label: 'Type', value: 'French door, bottom freezer' },
+      { label: 'Dispenser', value: 'In-door filtered ice and water' },
+      { label: 'Energy rating', value: 'ENERGY STAR certified' },
+      { label: 'Dimensions', value: '36"W x 70"H x 34"D' },
     ],
   },
   {
@@ -37,6 +51,12 @@ export const PRODUCTS = [
       { id: 'black', label: 'Black', hex: '#212529' },
       { id: 'red', label: 'Red', hex: '#e03131' },
     ],
+    specs: [
+      { label: 'Total capacity', value: '3.2 cu.ft' },
+      { label: 'Type', value: 'Freestanding compact' },
+      { label: 'Freezer compartment', value: 'Small top-mounted freezer box' },
+      { label: 'Dimensions', value: '17"W x 33"H x 18"D' },
+    ],
   },
   // TVs
   {
@@ -47,6 +67,14 @@ export const PRODUCTS = [
     price: 549.99,
     description: 'Vibrant 4K QLED display with built-in streaming apps.',
     colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
+    specs: [
+      { label: 'Screen size', value: '55 inches' },
+      { label: 'Resolution', value: '3840 x 2160 (4K UHD)' },
+      { label: 'Panel type', value: 'QLED, 60Hz' },
+      { label: 'Smart platform', value: 'VividOS 4.2' },
+      { label: 'Ports', value: '3x HDMI 2.1, 2x USB, optical audio' },
+      { label: 'Voice control', value: 'Built-in far-field microphone' },
+    ],
   },
   {
     id: 'tv-2',
@@ -54,8 +82,17 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'tvs',
     price: 999.0,
+    originalPrice: 1299.0,
     description: 'Deep blacks and true-to-life color with OLED panel technology.',
     colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
+    specs: [
+      { label: 'Screen size', value: '65 inches' },
+      { label: 'Resolution', value: '3840 x 2160 (4K UHD)' },
+      { label: 'Panel type', value: 'OLED, 120Hz' },
+      { label: 'Smart platform', value: 'VividOS 4.2' },
+      { label: 'Ports', value: '4x HDMI 2.1, 2x USB, optical audio' },
+      { label: 'HDR', value: 'Dolby Vision, HDR10+' },
+    ],
   },
   {
     id: 'tv-3',
@@ -65,6 +102,13 @@ export const PRODUCTS = [
     price: 179.99,
     description: 'Compact HD TV, great for bedrooms and kitchens.',
     colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
+    specs: [
+      { label: 'Screen size', value: '32 inches' },
+      { label: 'Resolution', value: '1366 x 768 (HD)' },
+      { label: 'Panel type', value: 'LED, 60Hz' },
+      { label: 'Smart platform', value: 'ClearScreen OS 2.0' },
+      { label: 'Ports', value: '2x HDMI, 1x USB' },
+    ],
   },
   // Vacuums
   {
@@ -78,6 +122,13 @@ export const PRODUCTS = [
       { id: 'white', label: 'White', hex: '#f8f9fa' },
       { id: 'black', label: 'Black', hex: '#212529' },
     ],
+    specs: [
+      { label: 'Navigation', value: 'LiDAR mapping with room-by-room cleaning' },
+      { label: 'Battery runtime', value: 'Up to 150 minutes per charge' },
+      { label: 'Dustbin capacity', value: '0.6L' },
+      { label: 'App', value: 'SweepMaster app, scheduling and no-go zones' },
+      { label: 'Software version', value: 'Firmware 3.1' },
+    ],
   },
   {
     id: 'vac-2',
@@ -85,10 +136,17 @@ export const PRODUCTS = [
     category: 'electronics',
     subcategory: 'vacuums',
     price: 159.0,
+    originalPrice: 199.0,
     description: 'Lightweight cordless vacuum with 40-minute runtime.',
     colors: [
       { id: 'blue', label: 'Blue', hex: '#1971c2' },
       { id: 'purple', label: 'Purple', hex: '#9c36b5' },
+    ],
+    specs: [
+      { label: 'Battery runtime', value: 'Up to 40 minutes per charge' },
+      { label: 'Weight', value: '4.2 lbs' },
+      { label: 'Dustbin capacity', value: '0.5L' },
+      { label: 'Filtration', value: 'Washable HEPA filter' },
     ],
   },
   // Electronics accessories
@@ -100,6 +158,11 @@ export const PRODUCTS = [
     price: 19.99,
     description: 'Works with most TVs, sound bars, and streaming boxes.',
     colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
+    specs: [
+      { label: 'Compatibility', value: 'Most major TV, sound bar, and streaming box brands' },
+      { label: 'Power', value: '2x AAA batteries (included)' },
+      { label: 'Setup', value: 'Auto-scan code pairing' },
+    ],
   },
   {
     id: 'eacc-2',
@@ -109,6 +172,11 @@ export const PRODUCTS = [
     price: 24.5,
     description: '8-outlet surge protector with 2 USB charging ports.',
     colors: [{ id: 'white', label: 'White', hex: '#f8f9fa' }],
+    specs: [
+      { label: 'Outlets', value: '8 AC outlets, 2 USB-A charging ports' },
+      { label: 'Surge protection', value: '1680 joules' },
+      { label: 'Cord length', value: '6 ft' },
+    ],
   },
   // Laptops
   {
@@ -122,6 +190,15 @@ export const PRODUCTS = [
       { id: 'silver', label: 'Silver', hex: '#ced4da' },
       { id: 'space-gray', label: 'Space Gray', hex: '#495057' },
     ],
+    specs: [
+      { label: 'Screen size', value: '14 inches, 1920 x 1200' },
+      { label: 'Processor', value: 'AeroCore 5-series, 8-core' },
+      { label: 'Memory', value: '16GB RAM' },
+      { label: 'Storage', value: '512GB SSD' },
+      { label: 'Operating system', value: 'AeroOS 14' },
+      { label: 'Battery life', value: 'Up to 18 hours' },
+      { label: 'Weight', value: '2.6 lbs' },
+    ],
   },
   {
     id: 'lap-2',
@@ -131,6 +208,15 @@ export const PRODUCTS = [
     price: 1599.99,
     description: 'High-performance laptop for demanding workloads.',
     colors: [{ id: 'space-gray', label: 'Space Gray', hex: '#495057' }],
+    specs: [
+      { label: 'Screen size', value: '16 inches, 2560 x 1600' },
+      { label: 'Processor', value: 'AeroCore 9-series, 12-core' },
+      { label: 'Memory', value: '32GB RAM' },
+      { label: 'Storage', value: '1TB SSD' },
+      { label: 'Graphics', value: 'Dedicated 8GB GPU' },
+      { label: 'Operating system', value: 'AeroOS 14' },
+      { label: 'Battery life', value: 'Up to 10 hours' },
+    ],
   },
   {
     id: 'lap-3',
@@ -138,10 +224,19 @@ export const PRODUCTS = [
     category: 'computers',
     subcategory: 'laptops',
     price: 499.99,
+    originalPrice: 599.99,
     description: 'Budget-friendly laptop for browsing and office work.',
     colors: [
       { id: 'silver', label: 'Silver', hex: '#ced4da' },
       { id: 'blue', label: 'Blue', hex: '#1971c2' },
+    ],
+    specs: [
+      { label: 'Screen size', value: '15.6 inches, 1920 x 1080' },
+      { label: 'Processor', value: 'AeroCore 3-series, 4-core' },
+      { label: 'Memory', value: '8GB RAM' },
+      { label: 'Storage', value: '256GB SSD' },
+      { label: 'Operating system', value: 'AeroOS 14' },
+      { label: 'Battery life', value: 'Up to 9 hours' },
     ],
   },
   // Computer accessories
@@ -156,6 +251,11 @@ export const PRODUCTS = [
       { id: 'black', label: 'Black', hex: '#212529' },
       { id: 'white', label: 'White', hex: '#f8f9fa' },
     ],
+    specs: [
+      { label: 'Connectivity', value: '2.4GHz wireless USB receiver' },
+      { label: 'Battery life', value: 'Up to 12 months (keyboard), 6 months (mouse)' },
+      { label: 'Compatibility', value: 'Windows, macOS, ChromeOS' },
+    ],
   },
   {
     id: 'cacc-2',
@@ -165,6 +265,11 @@ export const PRODUCTS = [
     price: 79.0,
     description: 'Single-cable docking with HDMI, USB-A, and Ethernet.',
     colors: [{ id: 'gray', label: 'Gray', hex: '#868e96' }],
+    specs: [
+      { label: 'Host connection', value: 'USB-C (100W power delivery)' },
+      { label: 'Video output', value: '1x HDMI, up to 4K @ 60Hz' },
+      { label: 'Ports', value: '3x USB-A, 1x Gigabit Ethernet, SD card reader' },
+    ],
   },
   {
     id: 'cacc-3',
@@ -175,6 +280,13 @@ export const PRODUCTS = [
     description: 'Sharp 1440p monitor with adjustable stand.',
     colors: [{ id: 'black', label: 'Black', hex: '#212529' }],
     sizes: ['24"', '27"', '32"'],
+    specs: [
+      { label: 'Resolution', value: '2560 x 1440 (QHD)' },
+      { label: 'Refresh rate', value: '144Hz' },
+      { label: 'Panel type', value: 'IPS' },
+      { label: 'Ports', value: 'HDMI, DisplayPort, USB-C' },
+      { label: 'Stand', value: 'Height, tilt, and swivel adjustable' },
+    ],
   },
   // Smartphones
   {
@@ -190,6 +302,14 @@ export const PRODUCTS = [
       { id: 'gold', label: 'Champagne Gold', hex: '#e8c468' },
     ],
     sizes: ['128GB', '256GB', '512GB'],
+    specs: [
+      { label: 'Screen size', value: '6.5 inches, 2400 x 1080 OLED' },
+      { label: 'Camera', value: 'Triple-lens: 50MP main, ultra-wide, telephoto' },
+      { label: 'Memory', value: '12GB RAM' },
+      { label: 'Battery', value: '4500mAh, fast + wireless charging' },
+      { label: 'Operating system', value: 'NovaOS 15' },
+      { label: 'Connectivity', value: '5G' },
+    ],
   },
   {
     id: 'phone-2',
@@ -203,6 +323,14 @@ export const PRODUCTS = [
       { id: 'white', label: 'White', hex: '#f8f9fa' },
     ],
     sizes: ['64GB', '128GB'],
+    specs: [
+      { label: 'Screen size', value: '6.1 inches, 2000 x 900 LCD' },
+      { label: 'Camera', value: 'Dual-lens: 48MP main, ultra-wide' },
+      { label: 'Memory', value: '6GB RAM' },
+      { label: 'Battery', value: '4200mAh, fast charging' },
+      { label: 'Operating system', value: 'NovaOS 15' },
+      { label: 'Connectivity', value: '5G' },
+    ],
   },
   // Phone accessories
   {
@@ -215,6 +343,11 @@ export const PRODUCTS = [
     colors: [
       { id: 'black', label: 'Black', hex: '#212529' },
       { id: 'white', label: 'White', hex: '#f8f9fa' },
+    ],
+    specs: [
+      { label: 'Output', value: 'Up to 15W wireless charging' },
+      { label: 'Compatibility', value: 'Qi-enabled phones, works through most cases' },
+      { label: 'Cable', value: 'USB-C to USB-A included' },
     ],
   },
   {
@@ -231,6 +364,11 @@ export const PRODUCTS = [
       { id: 'blue', label: 'Blue', hex: '#1971c2' },
     ],
     sizes: ['iPhone', 'Samsung Galaxy', 'Google Pixel'],
+    specs: [
+      { label: 'Drop protection', value: 'Tested to 6.6 ft (2m)' },
+      { label: 'Material', value: 'TPU bumper with polycarbonate back' },
+      { label: 'Wireless charging', value: 'Compatible, no need to remove case' },
+    ],
   },
 ]
 
@@ -254,4 +392,8 @@ export function getAllColors() {
     }
   }
   return [...seen.values()]
+}
+
+export function getOnSaleProducts() {
+  return PRODUCTS.filter((product) => product.originalPrice > product.price)
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PRODUCTS, getProduct, getAllColors } from './products'
+import { PRODUCTS, getProduct, getAllColors, getOnSaleProducts } from './products'
 import { getCategory, getSubcategory } from './categories'
 
 describe('getProduct', () => {
@@ -52,6 +52,46 @@ describe('PRODUCTS', () => {
       if (!product.sizes) continue
       expect(new Set(product.sizes).size).toBe(product.sizes.length)
     }
+  })
+
+  it('every product has at least one spec with a label and value', () => {
+    for (const product of PRODUCTS) {
+      expect(product.specs.length).toBeGreaterThan(0)
+      for (const spec of product.specs) {
+        expect(spec.label.length).toBeGreaterThan(0)
+        expect(spec.value.length).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('has no duplicate spec labels within a product', () => {
+    for (const product of PRODUCTS) {
+      const labels = product.specs.map((spec) => spec.label)
+      expect(new Set(labels).size).toBe(labels.length)
+    }
+  })
+
+  it('originalPrice, where present, is greater than the current price', () => {
+    for (const product of PRODUCTS) {
+      if (product.originalPrice === undefined) continue
+      expect(product.originalPrice).toBeGreaterThan(product.price)
+    }
+  })
+})
+
+describe('getOnSaleProducts', () => {
+  it('returns only products with an originalPrice greater than price', () => {
+    const onSale = getOnSaleProducts()
+    expect(onSale.length).toBeGreaterThan(0)
+    for (const product of onSale) {
+      expect(product.originalPrice).toBeGreaterThan(product.price)
+    }
+  })
+
+  it('excludes products with no originalPrice', () => {
+    const onSale = getOnSaleProducts()
+    const ids = onSale.map((product) => product.id)
+    expect(ids).not.toContain('ref-3')
   })
 })
 
