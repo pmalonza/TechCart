@@ -7,6 +7,7 @@ import VerifyEmailForm from './VerifyEmailForm'
 export default function AuthSection({
   currentUser,
   onSignUp,
+  onVerifySignUp,
   onSignIn,
   onVerifySignIn,
   onSignOut,
@@ -21,8 +22,18 @@ export default function AuthSection({
 
   async function handleSignUp(details) {
     const result = await onSignUp(details)
+    if (result.ok && result.requiresVerification) {
+      setVerifyEmail(details.email)
+      setVerifyDemoCode(result.code)
+      setMode('signup-verify')
+    }
+    return result
+  }
+
+  async function handleVerifySignUp(details) {
+    const result = await onVerifySignUp(details)
     if (result.ok) {
-      setJustCreated(details.name)
+      setJustCreated(result.name)
       setMode('signin')
     }
     return result
@@ -76,6 +87,13 @@ export default function AuthSection({
           demoCode={verifyDemoCode}
           onVerify={handleVerifySignIn}
           onCancel={() => setMode('signin')}
+        />
+      ) : mode === 'signup-verify' ? (
+        <VerifyEmailForm
+          email={verifyEmail}
+          demoCode={verifyDemoCode}
+          onVerify={handleVerifySignUp}
+          onCancel={() => setMode('signup')}
         />
       ) : mode === 'reset' ? (
         <ForgotPasswordForm
