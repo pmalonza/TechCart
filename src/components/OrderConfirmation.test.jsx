@@ -22,9 +22,11 @@ function makeOrder(overrides = {}) {
     subtotal: 259.0,
     discountCode: null,
     discountAmount: 0,
+    deliveryFee: 0,
     total: 259.0,
     address: { street: '123 Main St', city: 'Springfield', postalCode: '12345' },
     paymentMethod: 'paypal',
+    email: 'ada@gmail.com',
     ...overrides,
   }
 }
@@ -49,6 +51,31 @@ describe('OrderConfirmation', () => {
 
     expect(screen.getByText('Discount (SAVE10): -$25.90')).toBeInTheDocument()
     expect(screen.getByText('Total: $233.10')).toBeInTheDocument()
+  })
+
+  it('shows the delivery fee when charged', () => {
+    render(
+      <OrderConfirmation
+        order={makeOrder({ deliveryFee: 9.99, total: 268.99 })}
+        onContinueShopping={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Delivery: $9.99')).toBeInTheDocument()
+    expect(screen.getByText('Total: $268.99')).toBeInTheDocument()
+  })
+
+  it('shows Free when there is no delivery fee', () => {
+    render(<OrderConfirmation order={makeOrder()} onContinueShopping={vi.fn()} />)
+
+    expect(screen.getByText('Delivery: Free')).toBeInTheDocument()
+  })
+
+  it('shows a confirmation email message with the order email', () => {
+    render(<OrderConfirmation order={makeOrder()} onContinueShopping={vi.fn()} />)
+    expect(
+      screen.getByText('A confirmation email with your order details was sent to ada@gmail.com.'),
+    ).toBeInTheDocument()
   })
 
   it('shows the delivery address and payment method', () => {

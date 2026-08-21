@@ -8,6 +8,9 @@ export default function OrderConfirmation({ order, onContinueShopping }) {
         Order {order.id} placed. Thank you!
       </p>
       <p className="order-confirmation-detail">
+        A confirmation email with your order details was sent to {order.email}.
+      </p>
+      <p className="order-confirmation-detail">
         Shipping to {order.address.street}, {order.address.city} {order.address.postalCode}
       </p>
       <p className="order-confirmation-detail">
@@ -31,6 +34,9 @@ export default function OrderConfirmation({ order, onContinueShopping }) {
           Discount ({order.discountCode}): -{formatCurrency(order.discountAmount)}
         </p>
       )}
+      <p className="cart-subtotal">
+        Delivery: {order.deliveryFee > 0 ? formatCurrency(order.deliveryFee) : 'Free'}
+      </p>
       <p className="checkout-total">Total: {formatCurrency(order.total)}</p>
       <button type="button" className="add-button" onClick={onContinueShopping}>
         Continue shopping
