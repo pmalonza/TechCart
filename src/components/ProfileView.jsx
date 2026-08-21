@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function ProfileView({ user, onBack, onUpdateProfile }) {
+export default function ProfileView({ user, onBack, onUpdateProfile, onViewAddresses }) {
   const [name, setName] = useState(user.name)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
@@ -57,6 +57,11 @@ export default function ProfileView({ user, onBack, onUpdateProfile }) {
           {error}
         </p>
       )}
+      <p className="help-view-more">
+        <button type="button" className="text-button" onClick={onViewAddresses}>
+          Manage addresses
+        </button>
+      </p>
     </section>
   )
 }

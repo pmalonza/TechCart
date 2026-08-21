@@ -51,4 +51,21 @@ describe('ProfileView', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Enter your name.')
     expect(onUpdateProfile).not.toHaveBeenCalled()
   })
+
+  it('calls onViewAddresses when Manage addresses is clicked', async () => {
+    const userEv = userEvent.setup()
+    const onViewAddresses = vi.fn()
+    render(
+      <ProfileView
+        user={user1}
+        onBack={vi.fn()}
+        onUpdateProfile={vi.fn()}
+        onViewAddresses={onViewAddresses}
+      />,
+    )
+
+    await userEv.click(screen.getByRole('button', { name: 'Manage addresses' }))
+
+    expect(onViewAddresses).toHaveBeenCalledTimes(1)
+  })
 })
