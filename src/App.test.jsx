@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 
@@ -175,17 +175,25 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: 'Verify' }))
   }
 
+  async function completeSignUp(user, { name, email, password }) {
+    await goToSignUpTab(user)
+    await fillSignUpForm(user, { name, email, password })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    const code = screen.getByText(/the code is \d{6}/).textContent.match(/\d{6}/)[0]
+    await user.type(screen.getByLabelText('Verification code'), code)
+    await user.click(screen.getByRole('button', { name: 'Verify' }))
+  }
+
   it('creates an account and persists it to localStorage', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     expect(screen.getByRole('status')).toHaveTextContent('Account created for Ada Lovelace')
 
@@ -199,13 +207,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await goToSignUpTab(user)
     await fillSignUpForm(user, {
@@ -224,13 +230,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
@@ -246,13 +250,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'wrong-password')
@@ -277,13 +279,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
     await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: 'Sign out' }))
@@ -322,13 +322,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
     await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
@@ -355,13 +353,18 @@ describe('App', () => {
     expect(screen.getByText(/VividView 55" 4K QLED TV/)).toBeInTheDocument()
     expect(screen.getByText('Total: $549.99')).toBeInTheDocument()
 
-    await user.type(screen.getByLabelText('Street address'), '123 Main St')
-    await user.type(screen.getByLabelText('City'), 'Springfield')
-    await user.type(screen.getByLabelText('Postal code'), '12345')
-    await user.click(screen.getByRole('radio', { name: 'Bank transfer' }))
-    await user.click(screen.getByRole('button', { name: 'Place order' }))
+    const checkout = within(screen.getByRole('region', { name: 'Checkout' }))
+    await user.type(checkout.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(checkout.getByLabelText('Street address'), '123 Main St')
+    await user.type(checkout.getByLabelText('City'), 'Springfield')
+    await user.type(checkout.getByLabelText('Postal code'), '12345')
+    await user.click(checkout.getByRole('radio', { name: 'Bank transfer' }))
+    await user.click(checkout.getByRole('button', { name: 'Place order' }))
 
     expect(screen.getByRole('status')).toHaveTextContent(/Order ORD-.+ placed\. Thank you!/)
+    expect(
+      screen.getByText('A confirmation email with your order details was sent to ada@gmail.com.'),
+    ).toBeInTheDocument()
     expect(screen.getByText('Shipping to 123 Main St, Springfield 12345')).toBeInTheDocument()
     expect(screen.getByText('Payment method: Bank transfer')).toBeInTheDocument()
 
@@ -407,13 +410,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
     await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
 
     await user.click(screen.getByRole('button', { name: 'Profile' }))
@@ -450,13 +451,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'originalpw123',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
     await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
@@ -483,13 +482,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'originalpw123',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await user.click(screen.getByRole('button', { name: 'Forgot password?' }))
     await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
@@ -524,13 +521,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'longenoughpw')
@@ -544,13 +539,11 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await goToSignUpTab(user)
-    await fillSignUpForm(user, {
+    await completeSignUp(user, {
       name: 'Ada Lovelace',
       email: 'ada@gmail.com',
       password: 'longenoughpw',
     })
-    await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     await user.type(screen.getByLabelText('Email'), 'ada@gmail.com')
     await user.type(screen.getByLabelText('Password'), 'longenoughpw')
@@ -561,5 +554,289 @@ describe('App', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent('Invalid or expired verification code.')
     expect(screen.queryByText('Signed in as')).not.toBeInTheDocument()
+  })
+
+  it('returns to browse from product detail with one click on Home', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    expect(screen.getByRole('heading', { name: 'VividView 55" 4K QLED TV' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Home' }))
+
+    expect(screen.queryByRole('heading', { name: 'VividView 55" 4K QLED TV' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Electronics' })).toBeInTheDocument()
+  })
+
+  it('returns to browse from the cart with one click on Home', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Cart' }))
+    expect(screen.getByText('Your cart is empty.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Home' }))
+
+    expect(screen.queryByText('Your cart is empty.')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Electronics' })).toBeInTheDocument()
+  })
+
+  it('charges a delivery fee at checkout for a small order and waives it for a large one', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /Shockproof Phone Case/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+
+    expect(screen.getByText('Delivery: $9.99')).toBeInTheDocument()
+    expect(screen.getByText('Total: $24.98')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Back to cart/ }))
+    await user.click(screen.getByRole('button', { name: 'Home' }))
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (2)' }))
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+
+    expect(screen.getByText('Delivery: Free')).toBeInTheDocument()
+  })
+
+  it('subscribes to the newsletter from the browse page', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const newsletter = within(screen.getByRole('region', { name: 'Newsletter signup' }))
+    await user.type(newsletter.getByLabelText('Newsletter email'), 'ada@gmail.com')
+    await user.click(newsletter.getByRole('button', { name: 'Subscribe' }))
+
+    expect(newsletter.getByText("Subscribed! We'll send updates to ada@gmail.com.")).toBeInTheDocument()
+  })
+
+  it('reaches the contact form from Help and sends a message', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Help' }))
+    await user.click(screen.getByRole('button', { name: 'Contact us' }))
+
+    expect(screen.getByRole('heading', { name: 'Contact us' })).toBeInTheDocument()
+
+    const contact = within(screen.getByRole('region', { name: 'Contact us' }))
+    await user.type(contact.getByLabelText('Name'), 'Ada Lovelace')
+    await user.type(contact.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(contact.getByLabelText('Message'), 'Where is my order?')
+    await user.click(contact.getByRole('button', { name: 'Send message' }))
+
+    expect(contact.getByRole('status')).toHaveTextContent(
+      "Thanks, Ada Lovelace. Your message has been sent",
+    )
+
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+
+    expect(screen.getByRole('heading', { name: 'Help' })).toBeInTheDocument()
+  })
+
+  it('reaches the return policy and warranty pages from Help', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Help' }))
+    await user.click(screen.getByRole('button', { name: 'Return policy' }))
+
+    expect(screen.getByRole('heading', { name: 'Return Policy' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Return window' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+    await user.click(screen.getByRole('button', { name: 'Warranty' }))
+
+    expect(screen.getByRole('heading', { name: 'Warranty', level: 2 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Standard coverage' })).toBeInTheDocument()
+  })
+
+  it('searches products by name', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Search products'), 'monitor')
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+
+    expect(screen.getByText('27" 1440p Monitor')).toBeInTheDocument()
+    expect(screen.queryByText('VividView 55" 4K QLED TV')).not.toBeInTheDocument()
+  })
+
+  it('clears the search and shows all products again', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Search products'), 'monitor')
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    await user.click(screen.getByRole('button', { name: 'Clear search' }))
+
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+  })
+
+  it('opens a product detail view from the hot deals banner', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const hotDeals = within(screen.getByRole('region', { name: 'Hot deals' }))
+    await user.click(hotDeals.getByRole('button', { name: /ValueBook 15" Everyday Laptop/ }))
+
+    expect(screen.getByRole('heading', { name: 'ValueBook 15" Everyday Laptop' })).toBeInTheDocument()
+    expect(screen.getByText('$599.99')).toBeInTheDocument()
+    expect(screen.getByText('$499.99')).toBeInTheDocument()
+  })
+
+  it('adds a product to the wishlist, shows it in the wishlist view, and can remove it', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: /Add to wishlist/ }))
+
+    expect(screen.getByRole('button', { name: /In wishlist/ })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Wishlist (1)' }))
+
+    expect(screen.getByText('VividView 55" 4K QLED TV')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Remove.*from wishlist/ }))
+
+    expect(screen.getByText('Your wishlist is empty.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Wishlist' })).toBeInTheDocument()
+  })
+
+  it('keeps wishlist items tied to an account across sign out and sign in', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await completeSignUp(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: /Add to wishlist/ }))
+    expect(screen.getByRole('button', { name: 'Wishlist (1)' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Sign out' }))
+    expect(screen.getByRole('button', { name: 'Wishlist' })).toBeInTheDocument()
+
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
+
+    expect(screen.getByRole('button', { name: 'Wishlist (1)' })).toBeInTheDocument()
+  })
+
+  it('shows a placed order in order history and tracks its status', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+    const checkout = within(screen.getByRole('region', { name: 'Checkout' }))
+    await user.type(checkout.getByLabelText('Email'), 'ada@gmail.com')
+    await user.type(checkout.getByLabelText('Street address'), '123 Main St')
+    await user.type(checkout.getByLabelText('City'), 'Springfield')
+    await user.type(checkout.getByLabelText('Postal code'), '12345')
+    await user.click(checkout.getByRole('button', { name: 'Place order' }))
+
+    const orderId = screen.getByRole('status').textContent.match(/ORD-\w+/)[0]
+
+    await user.click(screen.getByRole('button', { name: 'Continue shopping' }))
+    await user.click(screen.getByRole('button', { name: 'Orders' }))
+
+    expect(screen.getByText(orderId)).toBeInTheDocument()
+    expect(screen.getByText('Order received')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Track order' }))
+
+    expect(screen.getByRole('heading', { name: orderId })).toBeInTheDocument()
+    expect(screen.getByText('Order received')).toHaveClass('order-tracking-step-complete')
+    expect(screen.getByText('Packed')).not.toHaveClass('order-tracking-step-complete')
+
+    await user.click(screen.getByRole('button', { name: /Simulate: mark as Packed/ }))
+
+    expect(screen.getByText('Packed')).toHaveClass('order-tracking-step-complete')
+
+    await user.click(screen.getByRole('button', { name: /Back to orders/ }))
+
+    expect(screen.getByText('Packed')).toBeInTheDocument()
+  })
+
+  it('manages a saved address book and correctly applies whichever address is selected at checkout', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await completeSignUp(user, {
+      name: 'Ada Lovelace',
+      email: 'ada@gmail.com',
+      password: 'longenoughpw',
+    })
+    await signIn(user, { email: 'ada@gmail.com', password: 'longenoughpw' })
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    await user.click(screen.getByRole('button', { name: 'Manage addresses' }))
+
+    await user.type(screen.getByLabelText('Label (optional)'), 'Home')
+    await user.type(screen.getByLabelText('Street address'), '123 Main St')
+    await user.type(screen.getByLabelText('City'), 'Springfield')
+    await user.type(screen.getByLabelText('Postal code'), '12345')
+    await user.click(screen.getByRole('button', { name: 'Add address' }))
+
+    await user.type(screen.getByLabelText('Label (optional)'), 'Work')
+    await user.type(screen.getByLabelText('Street address'), '456 Oak Ave')
+    await user.type(screen.getByLabelText('City'), 'Shelbyville')
+    await user.type(screen.getByLabelText('Postal code'), '67890')
+    await user.click(screen.getByRole('button', { name: 'Add address' }))
+
+    expect(screen.getByText('123 Main St, Springfield 12345')).toBeInTheDocument()
+    expect(screen.getByText('456 Oak Ave, Shelbyville 67890')).toBeInTheDocument()
+    expect(screen.getByText('Default')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Set as default' }))
+    expect(screen.getAllByText('Default')).toHaveLength(1)
+
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+    await user.click(screen.getByRole('button', { name: /Back/ }))
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+    await user.click(screen.getByRole('button', { name: 'Add to cart' }))
+    await user.click(screen.getByRole('button', { name: 'Cart (1)' }))
+    await user.click(screen.getByRole('button', { name: 'Checkout' }))
+
+    const checkout = within(screen.getByRole('region', { name: 'Checkout' }))
+    expect(checkout.getByLabelText('Street address')).toHaveValue('456 Oak Ave')
+
+    await user.click(checkout.getByRole('button', { name: /Home: 123 Main St/ }))
+
+    expect(checkout.getByLabelText('Street address')).toHaveValue('123 Main St')
+    expect(checkout.getByLabelText('City')).toHaveValue('Springfield')
+    expect(checkout.getByLabelText('Postal code')).toHaveValue('12345')
+  })
+
+  it('submits and shows a product review', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /VividView 55" 4K QLED TV/ }))
+
+    const reviews = within(screen.getByRole('region', { name: 'Reviews' }))
+    expect(reviews.getByText('No reviews yet. Be the first to review this product.')).toBeInTheDocument()
+
+    await user.type(reviews.getByLabelText('Your name'), 'Ada Lovelace')
+    await user.selectOptions(reviews.getByLabelText('Rating'), '4')
+    await user.type(reviews.getByLabelText('Review'), 'Great picture, a bit pricey.')
+    await user.click(reviews.getByRole('button', { name: 'Submit review' }))
+
+    expect(reviews.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(reviews.getByText('Great picture, a bit pricey.')).toBeInTheDocument()
+    expect(reviews.getByRole('heading', { name: /Reviews — 4.0 avg \(1\)/ })).toBeInTheDocument()
   })
 })
