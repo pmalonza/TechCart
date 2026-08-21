@@ -59,6 +59,13 @@ const ICONS = {
   ),
 }
 
-export default function ProductImage({ subcategory }) {
+export default function ProductImage({ subcategory, imageUrl }) {
+  if (imageUrl) {
+    return (
+      <span className="product-image">
+        <img src={imageUrl} alt="" className="product-image-photo" />
+      </span>
+    )
+  }
   return <span className="product-image">{ICONS[subcategory] ?? ICONS['electronics-accessories']}</span>
 }

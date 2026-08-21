@@ -18,4 +18,13 @@ describe('ProductImage', () => {
     const { container } = render(<ProductImage subcategory="made-up" />)
     expect(container.querySelector('svg')).toBeInTheDocument()
   })
+
+  it('renders an uploaded photo instead of the icon when imageUrl is set', () => {
+    const { container } = render(
+      <ProductImage subcategory="tvs" imageUrl="data:image/png;base64,abc123" />,
+    )
+    const img = container.querySelector('img')
+    expect(img).toHaveAttribute('src', 'data:image/png;base64,abc123')
+    expect(container.querySelector('svg')).not.toBeInTheDocument()
+  })
 })
