@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { AnnouncerProvider } from './AnnouncerContext'
 import { AuthProvider } from './AuthContext'
 import { CartProvider } from './CartContext'
+import { NewsletterProvider } from './NewsletterContext'
 import { OrdersProvider } from './OrdersContext'
 import { ProductsProvider } from './ProductsContext'
 import { WishlistProvider } from './WishlistContext'
@@ -14,7 +15,9 @@ export default function AppProviders({ children }: { children: ReactNode }) {
         <ProductsProvider>
           <CartProvider>
             <WishlistProvider>
-              <OrdersProvider>{children}</OrdersProvider>
+              <OrdersProvider>
+                <NewsletterProvider>{children}</NewsletterProvider>
+              </OrdersProvider>
             </WishlistProvider>
           </CartProvider>
         </ProductsProvider>

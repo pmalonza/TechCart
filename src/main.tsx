@@ -14,6 +14,7 @@ import './styles/wishlist.css'
 import './styles/account.css'
 import './styles/checkout.css'
 import './styles/sell.css'
+import './styles/footer.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

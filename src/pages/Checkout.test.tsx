@@ -408,7 +408,7 @@ describe('order pages', () => {
 
   it('shows an empty state on the orders page before any order', async () => {
     const { user } = await registerAndLand()
-    await user.click(screen.getByRole('link', { name: 'Orders' }))
+    await user.click(within(screen.getByRole('navigation', { name: 'Account' })).getByRole('link', { name: 'Orders' }))
     expect(await screen.findByRole('heading', { name: 'No orders yet' })).toBeInTheDocument()
   })
 })

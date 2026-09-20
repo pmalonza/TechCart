@@ -20,6 +20,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import OrderPage from './pages/OrderPage'
 import ProductPage from './pages/ProductPage'
 import ProductsPage from './pages/ProductsPage'
+import UnsubscribePage from './pages/UnsubscribePage'
 import WishlistPage from './pages/WishlistPage'
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="orders/:id" element={<OrderPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="newsletter/unsubscribe" element={<UnsubscribePage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />

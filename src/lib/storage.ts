@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   orders: 'techcart.orders.v1',
   sold: 'techcart.sold.v1',
   listings: 'techcart.listings.v1',
+  newsletter: 'techcart.newsletter.v1',
 } as const
 
 /** Reads and parses JSON from localStorage; returns `fallback` if it is missing, corrupt, or storage is unavailable. */

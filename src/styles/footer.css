@@ -1,0 +1,71 @@
+/* Footer: newsletter sign-up and site links */
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 32px 48px;
+  padding-bottom: 24px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-heading,
+.newsletter h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.newsletter p {
+  margin: 0 0 12px;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.newsletter-form .field {
+  flex: 1 1 220px;
+  margin: 0;
+}
+
+.newsletter-form .btn {
+  margin-top: 26px;
+}
+
+.newsletter-done {
+  margin: 12px 0 0;
+  color: var(--success);
+  font-weight: 600;
+}
+
+.newsletter-fine {
+  margin: 12px 0 0;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.footer-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .newsletter-form .btn {
+    margin-top: 0;
+  }
+}

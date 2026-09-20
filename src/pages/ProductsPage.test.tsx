@@ -24,7 +24,7 @@ describe('ProductsPage', () => {
     }
     expect(within(grid).queryByRole('heading', { name: 'Aurora X1' })).not.toBeInTheDocument()
 
-    expect(screen.getByRole('link', { name: 'Laptops' })).toHaveAttribute('aria-current', 'page')
+    expect(within(screen.getByRole('main')).getByRole('link', { name: 'Laptops' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'All' })).not.toHaveAttribute('aria-current')
   })
 

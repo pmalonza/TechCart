@@ -117,7 +117,7 @@ describe('search results page', () => {
 
   it('keeps the search when switching category chips', () => {
     renderApp('/products?q=nimbus')
-    expect(screen.getByRole('link', { name: 'Laptops' })).toHaveAttribute('href', '/products?category=laptops&q=nimbus')
+    expect(within(screen.getByRole('main')).getByRole('link', { name: 'Laptops' })).toHaveAttribute('href', '/products?category=laptops&q=nimbus')
     expect(screen.getByRole('link', { name: 'All' })).toHaveAttribute('href', '/products?q=nimbus')
   })
 
