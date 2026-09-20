@@ -8,6 +8,7 @@ import './styles/catalog.css'
 import './styles/product-detail.css'
 import './styles/search.css'
 import './styles/filters.css'
+import './styles/back-button.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

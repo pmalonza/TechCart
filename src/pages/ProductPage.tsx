@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import BackButton from '../components/BackButton'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { PriceTag, StockNote } from '../components/ProductCard'
 import ProductGrid from '../components/ProductGrid'
@@ -31,13 +32,16 @@ export default function ProductPage() {
 
   return (
     <div className="container page">
-      <Breadcrumbs
-        items={[
-          { label: 'Home', to: '/' },
-          { label: category.name, to: `/products?category=${category.id}` },
-          { label: product.name },
-        ]}
-      />
+      <div className="page-top">
+        <BackButton fallback={`/products?category=${category.id}`} />
+        <Breadcrumbs
+          items={[
+            { label: 'Home', to: '/' },
+            { label: category.name, to: `/products?category=${category.id}` },
+            { label: product.name },
+          ]}
+        />
+      </div>
 
       <div className="product-detail">
         <div className="product-detail-media">

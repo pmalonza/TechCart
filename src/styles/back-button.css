@@ -1,0 +1,42 @@
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+
+.back-button:hover {
+  background: var(--surface-2);
+}
+
+.back-button:active {
+  transform: translateX(-1px);
+}
+
+.back-button-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* A row holding the back button and, optionally, breadcrumbs. */
+.page-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.page-top .breadcrumbs {
+  margin: 0;
+}

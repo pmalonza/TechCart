@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import ActiveFilters from '../components/ActiveFilters'
+import BackButton from '../components/BackButton'
 import FilterPanel from '../components/FilterPanel'
 import ProductGrid from '../components/ProductGrid'
 import SortSelect from '../components/SortSelect'
@@ -58,6 +59,12 @@ export default function ProductsPage() {
 
   return (
     <div className="container page">
+      {(category || query) && (
+        <div className="page-top">
+          <BackButton fallback="/products" />
+        </div>
+      )}
+
       <header className="page-header">
         <h1>{heading}</h1>
         <p>{blurb}</p>
