@@ -1,8 +1,10 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FREE_SHIPPING_THRESHOLD_CENTS, SHIPPING_METHODS, TAX_RATE } from '../lib/checkout'
 import { MAX_LISTINGS_PER_USER } from '../lib/listings'
 import { formatPrice } from '../lib/money'
+import { STORAGE_KEYS } from '../lib/storage'
+import { ADA, registerAndLand } from '../test/auth'
 import { renderApp } from '../test/utils'
 
 /** Checks every long-form legal page must satisfy: sample-text notice, working contents list, reachable from the footer. */
@@ -78,9 +80,84 @@ describe('Terms and Conditions content', () => {
     expect(article.getByText(/only the card brand and the last four digits/i)).toBeInTheDocument()
   })
 
-  it('does not link to pages that do not exist', () => {
+  it('only links to pages that exist', () => {
     renderApp('/terms')
-    const paths = within(screen.getByRole('article')).queryAllByRole('link')
-    expect(paths).toEqual([])
+    const links = within(screen.getByRole('article')).queryAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/privacy'])
+  })
+})
+
+describeLegalPage('Privacy Policy', '/privacy', 'Privacy Policy')
+
+describe('Privacy Policy content', () => {
+  it('names every storage key the app uses, so a new one cannot be added without describing it', () => {
+    renderApp('/privacy')
+    const article = within(screen.getByRole('article'))
+    for (const key of Object.values(STORAGE_KEYS)) {
+      expect(article.getByText(key), key).toBeInTheDocument()
+    }
+  })
+
+  it('states that nothing leaves the browser and that no card details are kept', () => {
+    renderApp('/privacy')
+    const article = within(screen.getByRole('article'))
+    expect(article.getByText(/sets no cookies/)).toBeInTheDocument()
+    expect(article.getByText(/Nothing is sent to a server/)).toBeInTheDocument()
+    expect(article.getByText(/full card number, expiry date and security code are never saved/)).toBeInTheDocument()
+    expect(article.getByText(/Local storage is not encrypted/)).toBeInTheDocument()
+  })
+
+  it('only links to pages that exist', () => {
+    renderApp('/privacy')
+    const links = within(screen.getByRole('article')).getAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/newsletter/unsubscribe', '/terms'])
+  })
+
+  it('is linked from the terms page', () => {
+    renderApp('/terms')
+    expect(within(screen.getByRole('article')).getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', '/privacy')
+  })
+
+  it('is honest about deletion: account data goes, while guest orders, the cart and the newsletter stay', async () => {
+    const { user, view } = await registerAndLand()
+    const userId = JSON.parse(localStorage.getItem(STORAGE_KEYS.session)!) as string
+    view.unmount()
+
+    const base = {
+      createdAt: '2026-09-20T10:00:00.000Z',
+      lines: [{ productId: 'pulse-s5', name: 'Pulse S5', brand: 'Pulse', priceCents: 24900, quantity: 1 }],
+      subtotalCents: 24900,
+      shippingCents: 0,
+      taxCents: 1992,
+      totalCents: 26892,
+      shippingMethod: 'standard',
+      shippingAddress: { label: '', fullName: 'Guest Person', phone: '', line1: '1 Test Road', line2: '', city: 'Nairobi', region: '', postalCode: '00100', country: 'KE' },
+      payment: { method: 'cod' },
+      status: 'processing',
+    }
+    localStorage.setItem(
+      STORAGE_KEYS.orders,
+      JSON.stringify([
+        { ...base, id: 'own', number: 'TC-20260920-1111', userId, email: ADA.email },
+        { ...base, id: 'guest', number: 'TC-20260920-2222', userId: null, email: 'guest@example.com' },
+      ]),
+    )
+    localStorage.setItem(STORAGE_KEYS.newsletter, JSON.stringify([{ email: 'guest@example.com', subscribedAt: base.createdAt }]))
+    localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify([{ productId: 'nimbus-air-14', quantity: 1 }]))
+    localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(['nimbus-air-14']))
+
+    renderApp('/account/security')
+    await user.click(await screen.findByRole('button', { name: 'Delete my account' }))
+    await user.type(screen.getByLabelText('Confirm with your password'), ADA.password)
+    await user.click(screen.getByRole('button', { name: 'Permanently delete account' }))
+    await screen.findByRole('heading', { level: 1, name: /gadgets you will actually use/i })
+
+    const read = (key: string) => JSON.parse(localStorage.getItem(key) ?? 'null')
+    await waitFor(() => expect((read(STORAGE_KEYS.orders) as { id: string }[]).map((order) => order.id)).toEqual(['guest']))
+    expect(read(STORAGE_KEYS.users)).toEqual([])
+    expect(read(STORAGE_KEYS.session)).toBeNull()
+    expect(read(STORAGE_KEYS.newsletter)).toHaveLength(1)
+    expect(read(STORAGE_KEYS.cart)).toHaveLength(1)
+    expect(read(STORAGE_KEYS.wishlist)).toEqual(['nimbus-air-14'])
   })
 })

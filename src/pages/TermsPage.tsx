@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import LegalPage, { type LegalSection } from '../components/LegalPage'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { FREE_SHIPPING_THRESHOLD_CENTS, SHIPPING_METHODS, TAX_RATE } from '../lib/checkout'
@@ -117,7 +118,7 @@ const SECTIONS: LegalSection[] = [
     heading: 'Changes to these terms',
     body: (
       <p>
-        We may update these terms. The date at the top shows when they last changed, and using the site after a change means you accept the new version.
+        We may update these terms. The date at the top shows when they last changed, and using the site after a change means you accept the new version. See the <Link to="/privacy">Privacy Policy</Link> for how your information is handled.
       </p>
     ),
   },

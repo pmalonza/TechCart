@@ -46,6 +46,9 @@ export default function Footer() {
                 <li>
                   <Link to="/terms">Terms &amp; Conditions</Link>
                 </li>
+                <li>
+                  <Link to="/privacy">Privacy Policy</Link>
+                </li>
               </ul>
             </div>
           </nav>
