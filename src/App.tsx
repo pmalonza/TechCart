@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import RequireAuth from './components/RequireAuth'
 import AppProviders from './context/AppProviders'
 import AccountLayout from './pages/account/AccountLayout'
+import AddressesPage from './pages/account/AddressesPage'
 import ProfilePage from './pages/account/ProfilePage'
 import SecurityPage from './pages/account/SecurityPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
@@ -39,6 +40,7 @@ export default function App() {
             }
           >
             <Route index element={<ProfilePage />} />
+            <Route path="addresses" element={<AddressesPage />} />
             <Route path="security" element={<SecurityPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />

@@ -34,6 +34,9 @@ export default function AccountLayout() {
           <NavLink to="/account" end className={accountLinkClass}>
             Profile
           </NavLink>
+          <NavLink to="/account/addresses" className={accountLinkClass}>
+            Addresses
+          </NavLink>
           <NavLink to="/account/security" className={accountLinkClass}>
             Password &amp; security
           </NavLink>

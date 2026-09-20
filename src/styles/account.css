@@ -164,3 +164,80 @@
     border-radius: var(--radius-sm);
   }
 }
+
+/* Addresses */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+
+.address-form {
+  margin-top: 12px;
+}
+
+.default-check {
+  margin: 4px 0 16px;
+}
+
+.address-editor h3 {
+  margin-bottom: 4px;
+}
+
+.address-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.address-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-card:has(.address-editor) {
+  grid-column: 1 / -1;
+}
+
+.address-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.address-card-head h3 {
+  margin: 0;
+}
+
+.badge-pill {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-contrast);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.address-lines {
+  display: flex;
+  flex-direction: column;
+  font-style: normal;
+}
+
+.address-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,3 +1,5 @@
+import { sanitizeAddresses, type Address } from './addresses'
+
 /**
  * Client-side account helpers.
  *
@@ -19,10 +21,12 @@ export interface User {
   /** PBKDF2 iteration count used for `passwordHash`, stored so it can be raised later. */
   iterations: number
   createdAt: string
+  /** Saved delivery addresses; exactly one is the default when the list is non-empty. */
+  addresses: Address[]
 }
 
 /** A user with the credential fields removed, safe to hand to UI components. */
-export type PublicUser = Omit<User, 'passwordHash' | 'salt' | 'iterations'>
+export type PublicUser = Omit<User, 'passwordHash' | 'salt' | 'iterations' | 'addresses'>
 
 /** High for real use; low under test so the suite stays fast (the algorithm is identical). */
 export const HASH_ITERATIONS = import.meta.env.MODE === 'test' ? 1_000 : 310_000
@@ -130,7 +134,7 @@ export function sanitizeUsers(raw: unknown): User[] {
     if (ids.has(id) || emails.has(normalized)) continue
     ids.add(id)
     emails.add(normalized)
-    users.push({ id, name, email: normalized, passwordHash, salt, iterations, createdAt })
+    users.push({ id, name, email: normalized, passwordHash, salt, iterations, createdAt, addresses: sanitizeAddresses(record.addresses) })
   }
   return users
 }

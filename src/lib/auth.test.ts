@@ -23,6 +23,7 @@ const validUser = (overrides: Partial<User> = {}): User => ({
   salt: 'bb',
   iterations: 1000,
   createdAt: '2026-01-01T00:00:00.000Z',
+  addresses: [],
   ...overrides,
 })
 

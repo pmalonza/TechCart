@@ -1,6 +1,16 @@
 import { createContext, useCallback, useContext, useMemo, useRef, type ReactNode } from 'react'
 import { usePersistentState } from '../hooks/usePersistentState'
 import {
+  addAddress,
+  normalizeAddress,
+  removeAddress as removeAddressFrom,
+  setDefaultAddress as setDefaultAddressIn,
+  updateAddress,
+  validateAddress,
+  type Address,
+  type AddressInput,
+} from '../lib/addresses'
+import {
   createCredentials,
   newId,
   normalizeEmail,
@@ -26,9 +36,10 @@ import {
 import { STORAGE_KEYS } from '../lib/storage'
 
 export type AuthResult = { ok: true } | { ok: false; error: string }
+export type AddressResult = { ok: true; address: Address } | { ok: false; error: string }
 
 const OK: AuthResult = { ok: true }
-const fail = (error: string): AuthResult => ({ ok: false, error })
+const fail = (error: string) => ({ ok: false as const, error })
 
 interface AuthContextValue {
   /** The signed-in user, or null. Credential fields are never exposed. */
@@ -47,11 +58,18 @@ interface AuthContextValue {
   /** Whether a reset token is valid (known, unexpired, and for an account that still exists). */
   checkResetToken: (token: string) => Promise<boolean>
   resetPassword: (input: { token: string; newPassword: string }) => Promise<AuthResult>
+  /** The signed-in user's saved addresses (empty when signed out). */
+  addresses: Address[]
+  /** Adds a new address, or edits the one with `id`. Returns the saved address. */
+  saveAddress: (input: AddressInput, id?: string) => AddressResult
+  removeAddress: (id: string) => AuthResult
+  setDefaultAddress: (id: string) => AuthResult
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 const NO_USERS: User[] = []
 const NO_RESET_RECORDS: ResetRecord[] = []
+const NO_ADDRESSES: Address[] = []
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = usePersistentState<User[]>(STORAGE_KEYS.users, NO_USERS, sanitizeUsers)
@@ -88,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: name.trim(),
         email: normalized,
         createdAt: new Date().toISOString(),
+        addresses: [],
         ...credentials,
       }
       setUsers((current) => [...current, created])
@@ -194,6 +213,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [setUsers, setResetRecords],
   )
 
+  // Address changes are computed from the latest user record, then written back to it.
+  const writeAddresses = useCallback(
+    (userId: string, next: Address[]) =>
+      setUsers((current) => current.map((candidate) => (candidate.id === userId ? { ...candidate, addresses: next } : candidate))),
+    [setUsers],
+  )
+
+  const saveAddress = useCallback<AuthContextValue['saveAddress']>(
+    (input, id) => {
+      const active = currentRef.current
+      if (!active) return fail('You need to be signed in.')
+      if (Object.keys(validateAddress(input)).length > 0) return fail('Check the highlighted fields and try again.')
+      const normalized = normalizeAddress(input)
+      const change = id ? updateAddress(active.addresses, id, normalized) : addAddress(active.addresses, normalized, newId())
+      if (!change.address) return fail(change.error ?? 'Could not save the address.')
+      writeAddresses(active.id, change.addresses)
+      return { ok: true, address: change.address }
+    },
+    [writeAddresses],
+  )
+
+  const removeAddress = useCallback<AuthContextValue['removeAddress']>(
+    (id) => {
+      const active = currentRef.current
+      if (!active) return fail('You need to be signed in.')
+      writeAddresses(active.id, removeAddressFrom(active.addresses, id))
+      return OK
+    },
+    [writeAddresses],
+  )
+
+  const setDefaultAddress = useCallback<AuthContextValue['setDefaultAddress']>(
+    (id) => {
+      const active = currentRef.current
+      if (!active) return fail('You need to be signed in.')
+      writeAddresses(active.id, setDefaultAddressIn(active.addresses, id))
+      return OK
+    },
+    [writeAddresses],
+  )
+
+  const addresses = currentUser?.addresses ?? NO_ADDRESSES
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -206,8 +268,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       requestPasswordReset,
       checkResetToken,
       resetPassword,
+      addresses,
+      saveAddress,
+      removeAddress,
+      setDefaultAddress,
     }),
-    [user, signUp, signIn, signOut, updateProfile, changePassword, deleteAccount, requestPasswordReset, checkResetToken, resetPassword],
+    [
+      user,
+      signUp,
+      signIn,
+      signOut,
+      updateProfile,
+      changePassword,
+      deleteAccount,
+      requestPasswordReset,
+      checkResetToken,
+      resetPassword,
+      addresses,
+      saveAddress,
+      removeAddress,
+      setDefaultAddress,
+    ],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
