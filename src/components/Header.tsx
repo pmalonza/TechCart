@@ -4,6 +4,7 @@ import { CATEGORIES } from '../data/categories'
 import CategoriesMenu from './CategoriesMenu'
 import { CloseIcon, MenuIcon } from './icons'
 import Logo from './Logo'
+import SearchBar from './SearchBar'
 
 interface NavItem {
   to: string
@@ -58,6 +59,8 @@ export default function Header() {
           ))}
           <CategoriesMenu />
         </nav>
+
+        <SearchBar />
 
         <div className="header-actions">
           <button
