@@ -7,6 +7,7 @@ import './styles/layout.css'
 import './styles/catalog.css'
 import './styles/product-detail.css'
 import './styles/search.css'
+import './styles/filters.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
