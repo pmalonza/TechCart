@@ -15,6 +15,7 @@ import RegisterPage from './pages/auth/RegisterPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
+import HelpPage from './pages/HelpPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import OrderPage from './pages/OrderPage'
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="orders/:id" element={<OrderPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="help" element={<HelpPage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="newsletter/unsubscribe" element={<UnsubscribePage />} />

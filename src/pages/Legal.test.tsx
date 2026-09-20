@@ -110,7 +110,7 @@ describe('Privacy Policy content', () => {
   it('only links to pages that exist', () => {
     renderApp('/privacy')
     const links = within(screen.getByRole('article')).getAllByRole('link')
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/newsletter/unsubscribe', '/terms'])
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/newsletter/unsubscribe', '/help', '/terms'])
   })
 
   it('is linked from the terms page', () => {
@@ -145,6 +145,10 @@ describe('Privacy Policy content', () => {
     localStorage.setItem(STORAGE_KEYS.newsletter, JSON.stringify([{ email: 'guest@example.com', subscribedAt: base.createdAt }]))
     localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify([{ productId: 'nimbus-air-14', quantity: 1 }]))
     localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(['nimbus-air-14']))
+    localStorage.setItem(
+      STORAGE_KEYS.messages,
+      JSON.stringify([{ id: 'm1', reference: 'MSG-ABC123', name: 'Guest', email: 'guest@example.com', topic: 'other', message: 'Hello there, a test message.', createdAt: base.createdAt }]),
+    )
 
     renderApp('/account/security')
     await user.click(await screen.findByRole('button', { name: 'Delete my account' }))
@@ -159,5 +163,6 @@ describe('Privacy Policy content', () => {
     expect(read(STORAGE_KEYS.newsletter)).toHaveLength(1)
     expect(read(STORAGE_KEYS.cart)).toHaveLength(1)
     expect(read(STORAGE_KEYS.wishlist)).toEqual(['nimbus-air-14'])
+    expect(read(STORAGE_KEYS.messages)).toHaveLength(1)
   })
 })

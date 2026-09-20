@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import LegalPage, { type LegalSection } from '../components/LegalPage'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { MAX_MESSAGES } from '../lib/help'
 import { MAX_SUBSCRIBERS } from '../lib/newsletter'
 import { STORAGE_KEYS } from '../lib/storage'
 
@@ -50,6 +51,10 @@ const SECTIONS: LegalSection[] = [
           </li>
           <li>
             <strong>Newsletter</strong> (<code>{STORAGE_KEYS.newsletter}</code>): the email address and the date, for up to {MAX_SUBSCRIBERS} addresses.
+          </li>
+          <li>
+            <strong>Messages you send from the Help page</strong> (<code>{STORAGE_KEYS.messages}</code>): your name, email address, the topic and the text
+            of the message, for up to {MAX_MESSAGES} messages. Nobody receives them.
           </li>
           <li>
             <strong>Stock counts</strong> (<code>{STORAGE_KEYS.sold}</code>): how many of each product were ordered in this browser. It holds no personal
@@ -114,6 +119,9 @@ const SECTIONS: LegalSection[] = [
           </li>
           <li>
             <strong>Newsletter sign-ups</strong>, which you remove on the <Link to="/newsletter/unsubscribe">unsubscribe page</Link>.
+          </li>
+          <li>
+            <strong>Messages you sent</strong>, which you can delete one by one on the <Link to="/help">Help page</Link>.
           </li>
         </ul>
         <p>
