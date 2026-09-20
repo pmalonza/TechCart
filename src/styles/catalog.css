@@ -1,0 +1,256 @@
+.btn-hero {
+  margin-top: 8px;
+  background: #fff;
+  color: #2a2680;
+  border-color: #fff;
+}
+
+.btn-hero:hover {
+  background: #eef0ff;
+  color: #2a2680;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+/* Category tiles */
+.category-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.category-tile {
+  --tile-hue: 235;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--tile-hue) 60% 80%);
+  background: linear-gradient(135deg, hsl(var(--tile-hue) 80% 95%), hsl(var(--tile-hue) 70% 88%));
+  color: hsl(var(--tile-hue) 45% 22%);
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.category-tile:hover {
+  color: hsl(var(--tile-hue) 45% 22%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.category-tile-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.category-tile-blurb {
+  font-size: 0.92rem;
+  opacity: 0.85;
+}
+
+.category-tile-count {
+  margin-top: auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.chip:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.chip[aria-current='page'] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.result-count {
+  color: var(--muted);
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+}
+
+/* Product grid and cards */
+.product-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.product-grid > li {
+  display: flex;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.product-card-media {
+  position: relative;
+  background: var(--surface-2);
+}
+
+.product-art,
+.product-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.product-photo {
+  object-fit: cover;
+}
+
+.product-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+  flex: 1;
+}
+
+.product-brand {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.product-name {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stars {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: 1px;
+  font-size: 1rem;
+}
+
+.stars-base {
+  color: var(--border);
+}
+
+.stars-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--star);
+  z-index: 1;
+}
+
+.price-tag {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.price-was {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.sale-badge {
+  background: var(--danger);
+  color: #fff;
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.stock {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.stock-in {
+  color: var(--success);
+}
+
+.stock-low {
+  color: var(--warning);
+}
+
+.stock-out {
+  color: var(--danger);
+}
