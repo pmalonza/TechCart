@@ -1,6 +1,12 @@
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import RequireAuth from './components/RequireAuth'
 import AppProviders from './context/AppProviders'
+import AccountLayout from './pages/account/AccountLayout'
+import ProfilePage from './pages/account/ProfilePage'
+import SecurityPage from './pages/account/SecurityPage'
+import LoginPage from './pages/auth/LoginPage'
+import RegisterPage from './pages/auth/RegisterPage'
 import CartPage from './pages/CartPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -18,6 +24,19 @@ export default function App() {
           <Route path="products/:id" element={<ProductPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route
+            path="account"
+            element={
+              <RequireAuth>
+                <AccountLayout />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<ProfilePage />} />
+            <Route path="security" element={<SecurityPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

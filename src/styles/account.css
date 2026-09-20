@@ -1,0 +1,126 @@
+/* Sign in / register */
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.auth-card h1 {
+  font-size: 1.6rem;
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+/* Account area */
+.account-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.account-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.account-link {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.account-link:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.account-link.active {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.account-signout {
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--danger);
+}
+
+.account-content h2 {
+  font-size: 1.25rem;
+}
+
+.form-narrow {
+  max-width: 460px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.danger-zone {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+
+.small {
+  font-size: 0.88rem;
+}
+
+@media (max-width: 860px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .account-link {
+    width: auto;
+  }
+
+  .account-signout {
+    margin-top: 0;
+    border-top: none;
+    border-radius: var(--radius-sm);
+  }
+}

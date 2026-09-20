@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import { CATEGORIES } from '../data/categories'
 import CategoriesMenu from './CategoriesMenu'
-import { CartIcon, CloseIcon, HeartIcon, MenuIcon } from './icons'
+import { CartIcon, CloseIcon, HeartIcon, MenuIcon, UserIcon } from './icons'
 import Logo from './Logo'
 import SearchBar from './SearchBar'
 
@@ -29,6 +30,7 @@ export default function Header() {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const { pathname, search } = useLocation()
   const { itemCount } = useCart()
+  const { user } = useAuth()
   const { count: wishlistCount } = useWishlist()
 
   useEffect(() => {
@@ -67,6 +69,13 @@ export default function Header() {
         <SearchBar />
 
         <div className="header-actions">
+          <Link
+            to={user ? '/account' : '/login'}
+            className="icon-btn"
+            aria-label={user ? `My account (${user.name})` : 'Sign in'}
+          >
+            <UserIcon />
+          </Link>
           <Link
             to="/wishlist"
             className="icon-btn"
@@ -126,6 +135,29 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
+            </ul>
+            <p className="mobile-menu-heading">Account</p>
+            <ul>
+              {user ? (
+                <li>
+                  <Link className="nav-link" to="/account">
+                    My account
+                  </Link>
+                </li>
+              ) : (
+                <>
+                  <li>
+                    <Link className="nav-link" to="/login">
+                      Sign in
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="nav-link" to="/register">
+                      Create account
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </nav>

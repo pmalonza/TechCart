@@ -11,6 +11,7 @@ import './styles/filters.css'
 import './styles/back-button.css'
 import './styles/cart.css'
 import './styles/wishlist.css'
+import './styles/account.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

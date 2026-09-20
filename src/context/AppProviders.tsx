@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { AnnouncerProvider } from './AnnouncerContext'
+import { AuthProvider } from './AuthContext'
 import { CartProvider } from './CartContext'
 import { ProductsProvider } from './ProductsContext'
 import { WishlistProvider } from './WishlistContext'
@@ -8,11 +9,13 @@ import { WishlistProvider } from './WishlistContext'
 export default function AppProviders({ children }: { children: ReactNode }) {
   return (
     <AnnouncerProvider>
-      <ProductsProvider>
-        <CartProvider>
-          <WishlistProvider>{children}</WishlistProvider>
-        </CartProvider>
-      </ProductsProvider>
+      <AuthProvider>
+        <ProductsProvider>
+          <CartProvider>
+            <WishlistProvider>{children}</WishlistProvider>
+          </CartProvider>
+        </ProductsProvider>
+      </AuthProvider>
     </AnnouncerProvider>
   )
 }
