@@ -6,6 +6,7 @@ import QuantityStepper from '../components/QuantityStepper'
 import { useCart } from '../context/CartContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { maxQuantity } from '../lib/cart'
+import { amountToFreeShipping, FREE_SHIPPING_THRESHOLD_CENTS } from '../lib/checkout'
 import { formatPrice } from '../lib/money'
 
 export default function CartPage() {
@@ -104,8 +105,16 @@ export default function CartPage() {
               </div>
             )}
           </dl>
-          <p className="muted summary-note">Shipping and taxes are calculated at checkout.</p>
-          <Link className="btn btn-block" to="/products">
+          <p className="muted summary-note">
+            {amountToFreeShipping(summary.subtotalCents) > 0
+              ? `Add ${formatPrice(amountToFreeShipping(summary.subtotalCents))} more for free standard delivery on orders of ${formatPrice(FREE_SHIPPING_THRESHOLD_CENTS)} or more. `
+              : 'Your order qualifies for free standard delivery. '}
+            Delivery and taxes are calculated at checkout.
+          </p>
+          <Link className="btn btn-primary btn-block" to="/checkout">
+            Proceed to checkout
+          </Link>
+          <Link className="btn btn-block summary-continue" to="/products">
             Continue shopping
           </Link>
           <button type="button" className="btn-link summary-clear" onClick={clear}>

@@ -33,6 +33,7 @@ import {
   sha256Hex,
   type ResetRecord,
 } from '../lib/passwordReset'
+import { announceAccountDeleted } from '../lib/events'
 import { STORAGE_KEYS } from '../lib/storage'
 
 export type AuthResult = { ok: true } | { ok: false; error: string }
@@ -173,6 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSessionId(null)
       setUsers((current) => current.filter((candidate) => candidate.id !== active.id))
       setResetRecords((current) => removeRecordsForUser(current, active.id))
+      announceAccountDeleted(active.id)
       return OK
     },
     [setUsers, setSessionId, setResetRecords],
