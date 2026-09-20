@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import Logo from './Logo'
+import { Outlet, useLocation } from 'react-router-dom'
+import Footer from './Footer'
+import Header from './Header'
 
 function ResetScrollOnNavigation() {
   const { pathname } = useLocation()
@@ -17,22 +18,11 @@ export default function Layout() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <div className="container">
-          <Link to="/" className="brand">
-            <Logo className="brand-mark" />
-            TechCart
-          </Link>
-        </div>
-      </header>
+      <Header />
       <main id="main" className="app-main" tabIndex={-1}>
         <Outlet />
       </main>
-      <footer className="site-footer">
-        <div className="container">
-          <p style={{ margin: 0 }}>&copy; {new Date().getFullYear()} TechCart. A demo storefront - no real orders are placed.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
