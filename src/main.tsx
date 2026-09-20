@@ -16,6 +16,7 @@ import './styles/checkout.css'
 import './styles/sell.css'
 import './styles/footer.css'
 import './styles/help.css'
+import './styles/back-to-top.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

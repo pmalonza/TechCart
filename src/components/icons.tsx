@@ -48,6 +48,14 @@ export function SearchIcon({ className }: IconProps) {
   )
 }
 
+export function ArrowUpIcon({ className }: IconProps) {
+  return (
+    <svg {...svgProps} className={className}>
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  )
+}
+
 export function ArrowLeftIcon({ className }: IconProps) {
   return (
     <svg {...svgProps} className={className}>

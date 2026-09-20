@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import BackToTop, { PAGE_TOP_ID } from './BackToTop'
 import Footer from './Footer'
 import Header from './Header'
 
@@ -14,6 +15,7 @@ function ResetScrollOnNavigation() {
 export default function Layout() {
   return (
     <div className="app-shell">
+      <div id={PAGE_TOP_ID} tabIndex={-1} />
       <ResetScrollOnNavigation />
       <a className="skip-link" href="#main">
         Skip to content
@@ -23,6 +25,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <BackToTop />
     </div>
   )
 }
