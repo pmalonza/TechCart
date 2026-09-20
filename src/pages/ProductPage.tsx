@@ -63,6 +63,7 @@ export default function ProductPage() {
 
         <div className="product-detail-info">
           <p className="product-brand">{product.brand}</p>
+          {product.sellerId && <p className="community-badge">Community listing</p>}
           <h1>{product.name}</h1>
           <Rating rating={product.rating} reviewCount={product.reviewCount} />
 

@@ -4,6 +4,8 @@ import RequireAuth from './components/RequireAuth'
 import AppProviders from './context/AppProviders'
 import AccountLayout from './pages/account/AccountLayout'
 import AddressesPage from './pages/account/AddressesPage'
+import ListingsPage from './pages/account/ListingsPage'
+import NewListingPage from './pages/account/NewListingPage'
 import OrdersPage from './pages/account/OrdersPage'
 import ProfilePage from './pages/account/ProfilePage'
 import SecurityPage from './pages/account/SecurityPage'
@@ -47,6 +49,8 @@ export default function App() {
             <Route index element={<ProfilePage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="addresses" element={<AddressesPage />} />
+            <Route path="listings" element={<ListingsPage />} />
+            <Route path="listings/new" element={<NewListingPage />} />
             <Route path="security" element={<SecurityPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />

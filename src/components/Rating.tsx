@@ -4,6 +4,7 @@ interface RatingProps {
 }
 
 export default function Rating({ rating, reviewCount }: RatingProps) {
+  if (reviewCount === 0) return <span className="rating rating-none">No reviews yet</span>
   const label = `${rating.toFixed(1)} out of 5 stars${reviewCount !== undefined ? `, ${reviewCount.toLocaleString('en-US')} reviews` : ''}`
   return (
     <span className="rating">
