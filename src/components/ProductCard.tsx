@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { formatPrice, percentOff } from '../lib/money'
 import type { Product } from '../types'
 import ProductImage from './ProductImage'
@@ -35,7 +36,12 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
       <div className="product-card-body">
         <p className="product-brand">{product.brand}</p>
-        <h3 className="product-name">{product.name}</h3>
+        <h3 className="product-name">
+          {/* The link's ::after overlay makes the whole card clickable. */}
+          <Link className="product-link" to={`/products/${product.id}`}>
+            {product.name}
+          </Link>
+        </h3>
         <Rating rating={product.rating} reviewCount={product.reviewCount} />
         <PriceTag product={product} />
         <StockNote stock={product.stock} />

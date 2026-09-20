@@ -2,6 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import ProductGrid from '../components/ProductGrid'
 import { useProducts } from '../context/ProductsContext'
 import { CATEGORIES, getCategory, isCategoryId } from '../data/categories'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export default function ProductsPage() {
   const { products } = useProducts()
@@ -11,6 +12,7 @@ export default function ProductsPage() {
 
   const visible = category ? products.filter((product) => product.category === category) : products
   const heading = category ? getCategory(category).name : 'All products'
+  useDocumentTitle(heading)
   const blurb = category ? getCategory(category).blurb : 'Everything in the store, across every category.'
 
   return (
