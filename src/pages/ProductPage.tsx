@@ -1,18 +1,28 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import AddToCartButton from '../components/AddToCartButton'
 import BackButton from '../components/BackButton'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { PriceTag, StockNote } from '../components/ProductCard'
 import ProductGrid from '../components/ProductGrid'
 import ProductImage from '../components/ProductImage'
+import QuantityStepper from '../components/QuantityStepper'
 import Rating from '../components/Rating'
+import { useCart } from '../context/CartContext'
 import { useProducts } from '../context/ProductsContext'
 import { getCategory } from '../data/categories'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { maxQuantity } from '../lib/cart'
 
 export default function ProductPage() {
   const { id } = useParams()
   const { products, getProduct } = useProducts()
   const product = id ? getProduct(id) : undefined
+  const { getQuantity } = useCart()
+  const [wanted, setWanted] = useState(1)
+  useEffect(() => {
+    setWanted(1)
+  }, [id])
   useDocumentTitle(product?.name ?? 'Product not found')
 
   if (!product) {
@@ -28,6 +38,8 @@ export default function ProductPage() {
   }
 
   const category = getCategory(product.category)
+  const inCart = getQuantity(product.id)
+  const remaining = maxQuantity(product) - inCart
   const related = products.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4)
 
   return (
@@ -59,6 +71,24 @@ export default function ProductPage() {
           </div>
 
           <p className="product-detail-description">{product.description}</p>
+
+          {product.stock > 0 && (
+            <div className="purchase-row" role="group" aria-label="Purchase options">
+              <QuantityStepper
+                label={product.name}
+                value={Math.min(wanted, Math.max(1, remaining))}
+                max={Math.max(1, remaining)}
+                onChange={setWanted}
+              />
+              <AddToCartButton product={product} quantity={Math.min(wanted, Math.max(1, remaining))} />
+            </div>
+          )}
+          {inCart > 0 && (
+            <p className="muted in-cart-note">
+              {inCart} in your cart. <Link to="/cart">View cart</Link>
+            </p>
+          )}
+          {product.stock <= 0 && <AddToCartButton product={product} />}
 
           <section aria-labelledby="specs-heading">
             <h2 id="specs-heading" className="detail-subheading">

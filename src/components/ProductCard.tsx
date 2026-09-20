@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatPrice, percentOff } from '../lib/money'
 import type { Product } from '../types'
+import AddToCartButton from './AddToCartButton'
 import ProductImage from './ProductImage'
 import Rating from './Rating'
 
@@ -45,6 +46,9 @@ export default function ProductCard({ product }: { product: Product }) {
         <Rating rating={product.rating} reviewCount={product.reviewCount} />
         <PriceTag product={product} />
         <StockNote stock={product.stock} />
+        <div className="product-card-actions">
+          <AddToCartButton product={product} className="btn-sm btn-block" />
+        </div>
       </div>
     </article>
   )

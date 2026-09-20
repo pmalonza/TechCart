@@ -9,6 +9,7 @@ import './styles/product-detail.css'
 import './styles/search.css'
 import './styles/filters.css'
 import './styles/back-button.css'
+import './styles/cart.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

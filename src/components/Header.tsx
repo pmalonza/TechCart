@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import { CATEGORIES } from '../data/categories'
 import CategoriesMenu from './CategoriesMenu'
-import { CloseIcon, MenuIcon } from './icons'
+import { CartIcon, CloseIcon, MenuIcon } from './icons'
 import Logo from './Logo'
 import SearchBar from './SearchBar'
 
@@ -26,6 +27,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const { pathname, search } = useLocation()
+  const { itemCount } = useCart()
 
   useEffect(() => {
     setMenuOpen(false)
@@ -63,6 +65,18 @@ export default function Header() {
         <SearchBar />
 
         <div className="header-actions">
+          <Link
+            to="/cart"
+            className="icon-btn"
+            aria-label={`Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+          >
+            <CartIcon />
+            {itemCount > 0 && (
+              <span className="badge" aria-hidden="true">
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
+          </Link>
           <button
             ref={menuButtonRef}
             type="button"

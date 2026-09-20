@@ -24,7 +24,8 @@ describe('ProductPage', () => {
 
   it('shows sold-out and low-stock states', () => {
     const { unmount } = renderApp('/products/orbit-fold')
-    expect(screen.getByText('Out of stock')).toBeInTheDocument()
+    expect(screen.getByText('Out of stock', { selector: '.stock' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Out of stock' })).toBeDisabled()
     unmount()
 
     renderApp('/products/voltix-strix-17')
