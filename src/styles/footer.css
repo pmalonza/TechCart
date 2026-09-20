@@ -47,7 +47,7 @@
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 24px;
 }
 
@@ -67,5 +67,65 @@
 
   .newsletter-form .btn {
     margin-top: 0;
+  }
+}
+
+/* Legal pages: contents list beside long-form text */
+.legal-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.legal-toc {
+  position: sticky;
+  top: calc(var(--header-height) + 16px);
+}
+
+.legal-toc h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.legal-toc ol {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legal-body section {
+  margin-top: 28px;
+  scroll-margin-top: calc(var(--header-height) + 16px);
+}
+
+.legal-body h2 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.legal-body p,
+.legal-body li {
+  line-height: 1.65;
+}
+
+.legal-body ul {
+  padding-left: 22px;
+}
+
+.legal-intro p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 860px) {
+  .legal-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .legal-toc {
+    position: static;
   }
 }

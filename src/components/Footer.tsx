@@ -40,6 +40,14 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
+            <div>
+              <h2 className="footer-heading">Legal</h2>
+              <ul>
+                <li>
+                  <Link to="/terms">Terms &amp; Conditions</Link>
+                </li>
+              </ul>
+            </div>
           </nav>
         </div>
 
