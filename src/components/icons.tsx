@@ -89,3 +89,11 @@ export function TrashIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function HeartIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
+  return (
+    <svg {...svgProps} className={className} fill={filled ? 'currentColor' : 'none'}>
+      <path d="M12 20.5s-7.5-4.6-9.3-9.2C1.5 8 3.4 4.8 6.6 4.8c2 0 3.4 1.1 4.2 2.4h2.4c.8-1.3 2.2-2.4 4.2-2.4 3.2 0 5.1 3.2 3.9 6.5-1.8 4.6-9.3 9.2-9.3 9.2z" />
+    </svg>
+  )
+}

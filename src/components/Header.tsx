@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useWishlist } from '../context/WishlistContext'
 import { CATEGORIES } from '../data/categories'
 import CategoriesMenu from './CategoriesMenu'
-import { CartIcon, CloseIcon, MenuIcon } from './icons'
+import { CartIcon, CloseIcon, HeartIcon, MenuIcon } from './icons'
 import Logo from './Logo'
 import SearchBar from './SearchBar'
 
@@ -28,6 +29,7 @@ export default function Header() {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const { pathname, search } = useLocation()
   const { itemCount } = useCart()
+  const { count: wishlistCount } = useWishlist()
 
   useEffect(() => {
     setMenuOpen(false)
@@ -65,6 +67,18 @@ export default function Header() {
         <SearchBar />
 
         <div className="header-actions">
+          <Link
+            to="/wishlist"
+            className="icon-btn"
+            aria-label={`Wishlist, ${wishlistCount} ${wishlistCount === 1 ? 'item' : 'items'}`}
+          >
+            <HeartIcon />
+            {wishlistCount > 0 && (
+              <span className="badge badge-soft" aria-hidden="true">
+                {wishlistCount > 99 ? '99+' : wishlistCount}
+              </span>
+            )}
+          </Link>
           <Link
             to="/cart"
             className="icon-btn"

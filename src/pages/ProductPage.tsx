@@ -8,6 +8,7 @@ import ProductGrid from '../components/ProductGrid'
 import ProductImage from '../components/ProductImage'
 import QuantityStepper from '../components/QuantityStepper'
 import Rating from '../components/Rating'
+import WishlistButton from '../components/WishlistButton'
 import { useCart } from '../context/CartContext'
 import { useProducts } from '../context/ProductsContext'
 import { getCategory } from '../data/categories'
@@ -89,6 +90,9 @@ export default function ProductPage() {
             </p>
           )}
           {product.stock <= 0 && <AddToCartButton product={product} />}
+          <div className="wishlist-row">
+            <WishlistButton product={product} variant="full" />
+          </div>
 
           <section aria-labelledby="specs-heading">
             <h2 id="specs-heading" className="detail-subheading">

@@ -10,6 +10,7 @@ import './styles/search.css'
 import './styles/filters.css'
 import './styles/back-button.css'
 import './styles/cart.css'
+import './styles/wishlist.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

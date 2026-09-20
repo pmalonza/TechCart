@@ -3,6 +3,7 @@ import { formatPrice, percentOff } from '../lib/money'
 import type { Product } from '../types'
 import AddToCartButton from './AddToCartButton'
 import ProductImage from './ProductImage'
+import WishlistButton from './WishlistButton'
 import Rating from './Rating'
 
 export function StockNote({ stock }: { stock: number }) {
@@ -34,6 +35,9 @@ export default function ProductCard({ product }: { product: Product }) {
     <article className="product-card">
       <div className="product-card-media">
         <ProductImage product={product} />
+        <div className="product-card-wishlist">
+          <WishlistButton product={product} />
+        </div>
       </div>
       <div className="product-card-body">
         <p className="product-brand">{product.brand}</p>

@@ -1,0 +1,58 @@
+/* Heart toggle floating over a product card's image (above the card's stretched link) */
+.product-card-wishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.wishlist-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--muted);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: color 0.15s, transform 0.1s, background 0.15s;
+}
+
+.wishlist-icon:hover {
+  color: var(--danger);
+  background: var(--surface);
+}
+
+.wishlist-icon:active {
+  transform: scale(0.92);
+}
+
+.wishlist-icon[aria-pressed='true'],
+.wishlist-full[aria-pressed='true'] {
+  color: var(--danger);
+}
+
+.wishlist-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wishlist-row {
+  margin: 8px 0 16px;
+}
+
+.badge-soft {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.wishlist-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}

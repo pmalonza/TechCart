@@ -1,6 +1,7 @@
 /** Storage keys, versioned so a future data-shape change can migrate instead of crashing on old data. */
 export const STORAGE_KEYS = {
   cart: 'techcart.cart.v1',
+  wishlist: 'techcart.wishlist.v1',
 } as const
 
 /** Reads and parses JSON from localStorage; returns `fallback` if it is missing, corrupt, or storage is unavailable. */
