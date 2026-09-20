@@ -153,7 +153,9 @@ svg {
 }
 
 .page {
-  padding: 28px 0 64px;
+  /* Vertical only: `.container` supplies the horizontal padding on narrow screens. */
+  padding-top: 28px;
+  padding-bottom: 64px;
 }
 
 .page-header {
