@@ -5,8 +5,10 @@ import AppProviders from './context/AppProviders'
 import AccountLayout from './pages/account/AccountLayout'
 import ProfilePage from './pages/account/ProfilePage'
 import SecurityPage from './pages/account/SecurityPage'
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
+import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import CartPage from './pages/CartPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -26,6 +28,8 @@ export default function App() {
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route
             path="account"
             element={

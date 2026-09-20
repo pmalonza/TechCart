@@ -14,6 +14,15 @@ import {
   type PublicUser,
   type User,
 } from '../lib/auth'
+import {
+  addResetRecord,
+  createResetToken,
+  findValidRecord,
+  removeRecordsForUser,
+  sanitizeResetRecords,
+  sha256Hex,
+  type ResetRecord,
+} from '../lib/passwordReset'
 import { STORAGE_KEYS } from '../lib/storage'
 
 export type AuthResult = { ok: true } | { ok: false; error: string }
@@ -30,18 +39,35 @@ interface AuthContextValue {
   updateProfile: (input: { name: string; email: string }) => AuthResult
   changePassword: (input: { currentPassword: string; newPassword: string }) => Promise<AuthResult>
   deleteAccount: (password: string) => Promise<AuthResult>
+  /**
+   * Starts a password reset. Returns the reset token only when the account
+   * exists, so the demo inbox can show the "email" (there is no mail server).
+   */
+  requestPasswordReset: (email: string) => Promise<{ token: string | null }>
+  /** Whether a reset token is valid (known, unexpired, and for an account that still exists). */
+  checkResetToken: (token: string) => Promise<boolean>
+  resetPassword: (input: { token: string; newPassword: string }) => Promise<AuthResult>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 const NO_USERS: User[] = []
+const NO_RESET_RECORDS: ResetRecord[] = []
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = usePersistentState<User[]>(STORAGE_KEYS.users, NO_USERS, sanitizeUsers)
   const [sessionId, setSessionId] = usePersistentState<string | null>(STORAGE_KEYS.session, null, sanitizeSession)
 
-  // Async operations need the latest users, not the ones captured when the callback was created.
+  const [resetRecords, setResetRecords] = usePersistentState<ResetRecord[]>(
+    STORAGE_KEYS.resetTokens,
+    NO_RESET_RECORDS,
+    sanitizeResetRecords,
+  )
+
+  // Async operations need the latest data, not what was captured when the callback was created.
   const usersRef = useRef(users)
   usersRef.current = users
+  const resetRecordsRef = useRef(resetRecords)
+  resetRecordsRef.current = resetRecords
 
   const currentUser = useMemo(() => users.find((candidate) => candidate.id === sessionId) ?? null, [users, sessionId])
   const user = useMemo(() => (currentUser ? toPublicUser(currentUser) : null), [currentUser])
@@ -127,14 +153,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!(await verifyPassword(password, active))) return fail('That password is incorrect.')
       setSessionId(null)
       setUsers((current) => current.filter((candidate) => candidate.id !== active.id))
+      setResetRecords((current) => removeRecordsForUser(current, active.id))
       return OK
     },
-    [setUsers, setSessionId],
+    [setUsers, setSessionId, setResetRecords],
+  )
+
+  const requestPasswordReset = useCallback<AuthContextValue['requestPasswordReset']>(
+    async (email) => {
+      const normalized = normalizeEmail(email)
+      const found = usersRef.current.find((candidate) => candidate.email === normalized)
+      if (!found) return { token: null }
+      const now = Date.now()
+      const { token, record } = await createResetToken(found.id, now)
+      setResetRecords((current) => addResetRecord(current, record, now))
+      return { token }
+    },
+    [setResetRecords],
+  )
+
+  const checkResetToken = useCallback<AuthContextValue['checkResetToken']>(async (token) => {
+    if (!token) return false
+    const record = findValidRecord(resetRecordsRef.current, await sha256Hex(token), Date.now())
+    return record !== undefined && usersRef.current.some((candidate) => candidate.id === record.userId)
+  }, [])
+
+  const resetPassword = useCallback<AuthContextValue['resetPassword']>(
+    async ({ token, newPassword }) => {
+      const problem = validatePassword(newPassword)
+      if (problem) return fail(problem)
+      const record = token ? findValidRecord(resetRecordsRef.current, await sha256Hex(token), Date.now()) : undefined
+      const target = record ? usersRef.current.find((candidate) => candidate.id === record.userId) : undefined
+      if (!record || !target) return fail('This reset link is invalid or has expired. Request a new one.')
+      const credentials = await createCredentials(newPassword)
+      setUsers((current) => current.map((candidate) => (candidate.id === target.id ? { ...candidate, ...credentials } : candidate)))
+      // Single use: drop every outstanding link for this account.
+      setResetRecords((current) => removeRecordsForUser(current, target.id))
+      return OK
+    },
+    [setUsers, setResetRecords],
   )
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, signUp, signIn, signOut, updateProfile, changePassword, deleteAccount }),
-    [user, signUp, signIn, signOut, updateProfile, changePassword, deleteAccount],
+    () => ({
+      user,
+      signUp,
+      signIn,
+      signOut,
+      updateProfile,
+      changePassword,
+      deleteAccount,
+      requestPasswordReset,
+      checkResetToken,
+      resetPassword,
+    }),
+    [user, signUp, signIn, signOut, updateProfile, changePassword, deleteAccount, requestPasswordReset, checkResetToken, resetPassword],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

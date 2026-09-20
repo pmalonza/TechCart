@@ -72,6 +72,9 @@ export default function LoginPage() {
             error={errors.password}
             onChange={(event) => setPassword(event.target.value)}
           />
+          <p className="forgot-link">
+            <Link to="/forgot-password">Forgot your password?</Link>
+          </p>
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
             {submitting ? 'Signing in...' : 'Sign in'}
           </button>

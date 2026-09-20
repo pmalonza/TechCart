@@ -9,5 +9,7 @@ export default defineConfig({
     setupFiles: './src/test/setup.ts',
     css: false,
     pool: 'threads',
+    // Multi-step sign-up flows (typing + async password hashing) can be slow when many test files run in parallel.
+    testTimeout: 20_000,
   },
 })

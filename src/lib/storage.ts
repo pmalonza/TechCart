@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   wishlist: 'techcart.wishlist.v1',
   users: 'techcart.users.v1',
   session: 'techcart.session.v1',
+  resetTokens: 'techcart.resetTokens.v1',
 } as const
 
 /** Reads and parses JSON from localStorage; returns `fallback` if it is missing, corrupt, or storage is unavailable. */
